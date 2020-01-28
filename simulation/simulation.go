@@ -1,14 +1,25 @@
 package simulation
 
-import "time"
+import (
+	"fmt"
+	"time"
 
-import "fmt"
-
-var loop = true
+	"github.com/wdevore/Deuron8-Go/configuration"
+	"github.com/wdevore/Deuron8-Go/log"
+)
 
 // Entry is the main simulation entry point
 func Entry(c chan string) {
-	fmt.Println(("Beginning simulation"))
+	logger := log.New()
+
+	logger.LogInfo("Beginning simulation")
+
+	conf := configuration.New()
+
+	fmt.Println("Err: " + conf.ErrLogFileName())
+
+	loop := true
+
 	for loop {
 		select {
 		case cmd := <-c:
@@ -16,12 +27,11 @@ func Entry(c chan string) {
 				fmt.Println("Exiting sim")
 				loop = false
 			}
-			fmt.Println(("cmd: " + cmd))
 		default:
-			fmt.Println(("Simulating..."))
+			// Perform a chunk of steps.
+
+			fmt.Println("Simulating...")
 			time.Sleep(1000 * time.Millisecond)
 		}
 	}
-
-	fmt.Println(("Entry done."))
 }

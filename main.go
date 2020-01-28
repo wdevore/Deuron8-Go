@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/wdevore/Deuron8-Go/simulation"
 	"os"
 	"strings"
-	"github.com/wdevore/Deuron8_Go/simulation"
 )
 
 func main() {

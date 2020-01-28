@@ -1,3 +1,3 @@
-module github.com/wdevore/Deuron8_Go
+module github.com/wdevore/Deuron8-Go
 
 go 1.13
