@@ -1,6 +1,6 @@
 {
   "ErrLog": "error.log",
   "InfoLog": "info.log",
-  "ExitState": "Paused",
+  "ExitState": "Terminated",
   "LogRoot": "/media/RAMDisk/"
 }

@@ -5,19 +5,30 @@ import (
 	"time"
 
 	"github.com/wdevore/Deuron8-Go/configuration"
+	"github.com/wdevore/Deuron8-Go/interfaces"
 	"github.com/wdevore/Deuron8-Go/log"
 )
 
+// Logger is the main logger for the simulation
+var Logger interfaces.ILogger
+
+// Config is the runtime configuration
+var Config interfaces.IConfig
+
+func init() {
+	Config = configuration.New()
+	Logger = log.New(Config)
+}
+
 // Entry is the main simulation entry point
 func Entry(c chan string) {
-	logger := log.New()
 
-	logger.LogInfo("Beginning simulation")
+	Logger.LogInfo("Beginning simulation")
 
-	conf := configuration.New()
+	fmt.Println("Err: " + Config.ErrLogFileName())
 
-	fmt.Println("Err: " + conf.ErrLogFileName())
-
+	Config.SetExitState("Terminated")
+	Config.Save()
 	loop := true
 
 	for loop {

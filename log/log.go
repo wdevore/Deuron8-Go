@@ -7,13 +7,14 @@ import (
 
 // Logger implements ILog
 type Logger struct {
-	infoLogPath string
+	infoLogFile  string
+	errorLogFile string
 }
 
 // New constructs an ILog object
-func New() interfaces.ILogger {
+func New(config interfaces.IConfig) interfaces.ILogger {
 	o := new(Logger)
-	o.infoLogPath = "info2.log"
+	o.infoLogFile = config.InfoLogFileName()
 	return o
 }
 
