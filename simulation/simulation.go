@@ -1,7 +1,6 @@
 package simulation
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wdevore/Deuron8-Go/configuration"
@@ -20,29 +19,82 @@ func init() {
 	Logger = log.New(Config)
 }
 
+var paused = false
+var debug = 0
+
 // Entry is the main simulation entry point
 func Entry(c chan string) {
+	debug = 0
 
-	Logger.LogInfo("Beginning simulation")
+	// fmt.Println("Err: " + Config.ErrLogFileName())
 
-	fmt.Println("Err: " + Config.ErrLogFileName())
-
-	Config.SetExitState("Terminated")
-	Config.Save()
 	loop := true
+	run := false
 
 	for loop {
 		select {
 		case cmd := <-c:
-			if cmd == "exit" {
-				fmt.Println("Exiting sim")
+			switch cmd {
+			case "exit":
+				Config.SetExitState("Terminated")
+				Logger.LogInfo("Exiting simulation...")
+				loop = false
+			case "run":
+				Logger.LogInfo("Simulation starting...")
+				Logger.LogInfo("Simulation running...")
+				run = true
+			case "pause":
+				Config.SetExitState("Paused")
+				Logger.LogInfo("Simulation paused")
+				paused = true
+			case "resume":
+				Logger.LogInfo("Simulation resumed")
+				paused = false
+			case "reset":
+				Logger.LogInfo("Simulation resetting...")
+				Logger.LogInfo("Simulation reset and paused")
+				paused = true
+			case "stop":
+				Config.SetExitState("Stopped")
+				Logger.LogInfo("Stopping simulation...")
+				run = false
 				loop = false
 			}
 		default:
-			// Perform a chunk of steps.
+			if !run {
+				time.Sleep(10 * time.Millisecond)
+				continue
+			}
 
-			fmt.Println("Simulating...")
+			// A simulation runs in chunks. This gives the "application" a chance
+			// to check on user input. A chunk size depends on how long a group
+			// of simulation steps take.
+			if paused {
+				Logger.LogInfo("-- paused --")
+			} else {
+				run = simulate()
+				if !run {
+					Logger.LogInfo("Simulation has completed and stopped")
+					debug = 0
+				}
+			}
+
 			time.Sleep(1000 * time.Millisecond)
 		}
 	}
+
+	Logger.LogInfo("Simulation goroutine is exiting...")
+
+	Config.Save()
+}
+
+func simulate() bool {
+	debug++
+	Logger.LogInfo("Simulating...")
+	if debug > 5 {
+		Config.SetExitState("Completed")
+		return false
+	}
+
+	return true
 }

@@ -17,6 +17,8 @@ func main() {
 	end := false
 
 	ch := make(chan string)
+	// Launch simulation thread. It will idle by default.
+	go simulation.Entry(ch)
 
 	for !end {
 		text, _ := reader.ReadString('\n')
@@ -25,18 +27,29 @@ func main() {
 
 		switch text {
 		case "q":
+			// send(ch, "exit")
 			ch <- "exit"
 			end = true
 		case "r":
-			go simulation.Entry(ch)
+			// go send(ch, "run")
+			ch <- "run"
+		case "p":
+			// go send(ch, "pause")
+			ch <- "pause"
+		case "u":
+			// go send(ch, "resume")
+			ch <- "resume"
+		case "s":
+			// go send(ch, "reset")
+			ch <- "reset"
+		case "t":
+			// go send(ch, "stop")
+			ch <- "stop"
 		default:
 			fmt.Println("*********************")
 			fmt.Println("** Unknown command **")
 			fmt.Println("*********************")
 		}
-		// if strings.Compare("hi", text) == 0 {
-		// 	fmt.Println("hello, Yourself")
-		// }
 
 		if !end {
 			printHelp()
@@ -46,6 +59,10 @@ func main() {
 	fmt.Println("Goodbye.")
 }
 
+func send(ch chan string, msg string) {
+	ch <- msg
+}
+
 func printHelp() {
 	fmt.Println("-----------------------------")
 	fmt.Println("Commands:")
@@ -53,7 +70,8 @@ func printHelp() {
 	fmt.Println("  r: run simulation")
 	fmt.Println("  p: pause simulation")
 	fmt.Println("  u: resume simulation")
-	fmt.Println("  s: reset simulation")
+	fmt.Println("  s: reset simulation. Sim is stopped after reset.")
+	fmt.Println("  t: stop simulation")
 	fmt.Println("  a: status of simulation")
 	fmt.Println("  h: this help menu")
 	fmt.Println("-----------------------------")
