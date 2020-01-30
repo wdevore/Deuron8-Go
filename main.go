@@ -3,13 +3,24 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/wdevore/Deuron8-Go/simulation"
 	"os"
 	"strings"
+
+	"github.com/wdevore/Deuron8-Go/config"
+	logg "github.com/wdevore/Deuron8-Go/log"
+	"github.com/wdevore/Deuron8-Go/simulation"
 )
+
+func init() {
+	config.API = config.New()
+	logg.API = logg.New(config.API)
+}
 
 func main() {
 	fmt.Println("Welcome to Deuron8 Go edition")
+
+	defer config.API.Save()
+	defer logg.API.Close()
 
 	reader := bufio.NewReader(os.Stdin)
 	printHelp()

@@ -1,7 +1,8 @@
-package configuration
+package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -10,28 +11,31 @@ import (
 	"github.com/wdevore/Deuron8-Go/interfaces"
 )
 
-// Config is a JSON decoded object. See config.json
-type Config struct {
+// API is the runtime configuration
+var API interfaces.IConfig
+
+type configJSON struct {
 	ErrLog    string `json:"ErrLog"`
 	InfoLog   string `json:"InfoLog"`
 	ExitState string `json:"ExitState"`
 	LogRoot   string `json:"LogRoot"`
 }
 
-// Configuration is the main configuration of the app.
-type Configuration struct {
-	config Config
-	path   string
+type configuration struct {
+	dirty bool
+	conf  configJSON
+	path  string
 }
 
 const configFile = "/config.json"
 
 // New construct an IConfig object
 func New() interfaces.IConfig {
-	o := new(Configuration)
+	o := new(configuration)
+	o.dirty = false
 
 	// dir, err := filepath.Abs(filepath.Dir(""))
-	confPath, err := filepath.Abs("configuration")
+	confPath, err := filepath.Abs("config")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +50,7 @@ func New() interfaces.IConfig {
 
 	defer jsonFile.Close()
 
-	err = json.NewDecoder(jsonFile).Decode(&o.config)
+	err = json.NewDecoder(jsonFile).Decode(&o.conf)
 
 	if err != nil {
 		log.Fatalln("ERROR:", err)
@@ -57,8 +61,13 @@ func New() interfaces.IConfig {
 }
 
 // Save persists the current config to json file.
-func (c *Configuration) Save() {
-	indentedJSON, _ := json.MarshalIndent(c.config, "", "  ")
+func (c *configuration) Save() {
+	if !c.dirty {
+		fmt.Print("nothing to sca")
+		return
+	}
+
+	indentedJSON, _ := json.MarshalIndent(c.conf, "", "  ")
 	err := ioutil.WriteFile(c.path+configFile, indentedJSON, 0644)
 	if err != nil {
 		log.Fatalln("ERROR:", err)
@@ -66,18 +75,18 @@ func (c *Configuration) Save() {
 }
 
 // ErrLogFileName is the name of the error log file.
-func (c *Configuration) ErrLogFileName() string {
-	return c.config.ErrLog
+func (c *configuration) ErrLogFileName() string {
+	return c.conf.ErrLog
 }
 
 // InfoLogFileName is the name of the info log file.
-func (c *Configuration) InfoLogFileName() string {
-	return c.config.ErrLog
+func (c *configuration) InfoLogFileName() string {
+	return c.conf.InfoLog
 }
 
 // LogRoot is the base path to where log files are located.
-func (c *Configuration) LogRoot() string {
-	return c.config.LogRoot
+func (c *configuration) LogRoot() string {
+	return c.conf.LogRoot
 }
 
 // ExitState indicates what the last state the
@@ -86,12 +95,14 @@ func (c *Configuration) LogRoot() string {
 //   Terminated = user quit simulation while it was inprogress
 //   Completed = sim terminated on its own
 //   Crashed = sim died
-//   Paused = user paused simulation
-func (c *Configuration) ExitState() string {
-	return c.config.ExitState
+//   Paused = user paused simulation and exited
+//   Exited = user exited when no simulation was running
+func (c *configuration) ExitState() string {
+	return c.conf.ExitState
 }
 
 // SetExitState sets a value upon deuron exit.
-func (c *Configuration) SetExitState(state string) {
-	c.config.ExitState = state
+func (c *configuration) SetExitState(state string) {
+	c.conf.ExitState = state
+	c.dirty = true
 }

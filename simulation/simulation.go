@@ -3,65 +3,63 @@ package simulation
 import (
 	"time"
 
-	"github.com/wdevore/Deuron8-Go/configuration"
-	"github.com/wdevore/Deuron8-Go/interfaces"
-	"github.com/wdevore/Deuron8-Go/log"
+	"github.com/wdevore/Deuron8-Go/config"
+	logg "github.com/wdevore/Deuron8-Go/log"
 )
 
-// Logger is the main logger for the simulation
-var Logger interfaces.ILogger
-
-// Config is the runtime configuration
-var Config interfaces.IConfig
-
-func init() {
-	Config = configuration.New()
-	Logger = log.New(Config)
-}
-
 var paused = false
+var completed = false
+
 var debug = 0
 
 // Entry is the main simulation entry point
 func Entry(c chan string) {
 	debug = 0
-
-	// fmt.Println("Err: " + Config.ErrLogFileName())
-
 	loop := true
-	run := false
+	running := false
 
 	for loop {
 		select {
 		case cmd := <-c:
 			switch cmd {
 			case "exit":
-				Config.SetExitState("Terminated")
-				Logger.LogInfo("Exiting simulation...")
+				if running {
+					config.API.SetExitState("Terminated")
+					logg.API.LogInfo("Terminating Exiting simulation...")
+				} else {
+					if !completed {
+						config.API.SetExitState("Exited")
+					}
+				}
 				loop = false
 			case "run":
-				Logger.LogInfo("Simulation starting...")
-				Logger.LogInfo("Simulation running...")
-				run = true
+				if running {
+					continue
+				}
+				logg.API.LogInfo("Simulation starting...")
+				logg.API.LogInfo("Simulation running...")
+				running = true
+				completed = false
 			case "pause":
-				Config.SetExitState("Paused")
-				Logger.LogInfo("Simulation paused")
+				config.API.SetExitState("Paused")
+				logg.API.LogInfo("Simulation paused")
 				paused = true
 			case "resume":
-				Logger.LogInfo("Simulation resumed")
+				logg.API.LogInfo("Simulation resumed")
 				paused = false
 			case "reset":
-				Logger.LogInfo("Simulation resetting...")
-				Logger.LogInfo("Simulation reset and paused")
+				logg.API.LogInfo("Simulation resetting...")
+				logg.API.LogInfo("Simulation reset and paused")
 				paused = true
 			case "stop":
-				Config.SetExitState("Stopped")
-				Logger.LogInfo("Stopping simulation...")
-				run = false
-				loop = false
+				config.API.SetExitState("Stopped")
+				logg.API.LogInfo("Stopping simulation...")
+				running = false
+				completed = false
+				logg.API.LogInfo("Simulation stopped before completion")
 			}
 		default:
-			if !run {
+			if !running {
 				time.Sleep(10 * time.Millisecond)
 				continue
 			}
@@ -70,11 +68,13 @@ func Entry(c chan string) {
 			// to check on user input. A chunk size depends on how long a group
 			// of simulation steps take.
 			if paused {
-				Logger.LogInfo("-- paused --")
+				logg.API.LogInfo("-- paused --")
 			} else {
-				run = simulate()
-				if !run {
-					Logger.LogInfo("Simulation has completed and stopped")
+				running = simulate()
+				if !running {
+					config.API.SetExitState("Completed")
+					completed = true
+					logg.API.LogInfo("Simulation has completed and stopped")
 					debug = 0
 				}
 			}
@@ -83,18 +83,15 @@ func Entry(c chan string) {
 		}
 	}
 
-	Logger.LogInfo("Simulation goroutine is exiting...")
-
-	Config.Save()
+	logg.API.LogInfo("Simulation goroutine is exiting...")
 }
 
 func simulate() bool {
 	debug++
-	Logger.LogInfo("Simulating...")
 	if debug > 5 {
-		Config.SetExitState("Completed")
 		return false
 	}
+	logg.API.LogInfo("Simulating...")
 
 	return true
 }

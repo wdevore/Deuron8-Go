@@ -4,6 +4,7 @@ package interfaces
 type ILogger interface {
 	LogError(string)
 	LogInfo(string)
+	Close()
 }
 
 // IConfig holds configuration and runtime properties.
