@@ -18,3 +18,18 @@ type IConfig interface {
 
 	Save()
 }
+
+// IVisStimInput is stimulus from an image
+type IVisStimInput interface {
+	Configure(imageFile string) error
+
+	SetSize(string)
+
+	EnableExpand(bool)
+	SetExpand(string)
+	Expand(value int) string
+
+	SetStimulusAt(x, y int)
+	GetStimulus() []int
+	GetStimulusComp(value int) []int
+}

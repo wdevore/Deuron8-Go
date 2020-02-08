@@ -14,6 +14,7 @@ import (
 // API is the runtime configuration
 var API interfaces.IConfig
 
+// The JSON data structure
 type configJSON struct {
 	ErrLog    string `json:"ErrLog"`
 	InfoLog   string `json:"InfoLog"`
@@ -22,20 +23,20 @@ type configJSON struct {
 }
 
 type configuration struct {
-	dirty bool
-	conf  configJSON
-	path  string
+	dirty      bool
+	conf       configJSON
+	path       string
+	configFile string
 }
 
-const configFile = "/config.json"
-
 // New construct an IConfig object
-func New() interfaces.IConfig {
+func New(configFile string) interfaces.IConfig {
 	o := new(configuration)
 	o.dirty = false
+	o.configFile = configFile
 
 	// dir, err := filepath.Abs(filepath.Dir(""))
-	confPath, err := filepath.Abs("config")
+	confPath, err := filepath.Abs("")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,12 +64,12 @@ func New() interfaces.IConfig {
 // Save persists the current config to json file.
 func (c *configuration) Save() {
 	if !c.dirty {
-		fmt.Print("nothing to sca")
+		fmt.Print("nothing to save")
 		return
 	}
 
 	indentedJSON, _ := json.MarshalIndent(c.conf, "", "  ")
-	err := ioutil.WriteFile(c.path+configFile, indentedJSON, 0644)
+	err := ioutil.WriteFile(c.path+c.configFile, indentedJSON, 0644)
 	if err != nil {
 		log.Fatalln("ERROR:", err)
 	}

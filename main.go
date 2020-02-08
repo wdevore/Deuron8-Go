@@ -11,8 +11,10 @@ import (
 	"github.com/wdevore/Deuron8-Go/simulation"
 )
 
+const configFile = "config/config.json"
+
 func init() {
-	config.API = config.New()
+	config.API = config.New(configFile)
 	logg.API = logg.New(config.API)
 }
 
@@ -28,8 +30,8 @@ func main() {
 	end := false
 
 	ch := make(chan string)
-	// Launch simulation thread. It will idle by default.
-	go simulation.Entry(ch)
+	// Start simulation thread. It will idle by default.
+	go simulation.Boot(ch)
 
 	for !end {
 		text, _ := reader.ReadString('\n')
@@ -38,24 +40,20 @@ func main() {
 
 		switch text {
 		case "q":
-			// send(ch, "exit")
 			ch <- "exit"
 			end = true
 		case "r":
-			// go send(ch, "run")
 			ch <- "run"
 		case "p":
-			// go send(ch, "pause")
 			ch <- "pause"
 		case "u":
-			// go send(ch, "resume")
 			ch <- "resume"
 		case "s":
-			// go send(ch, "reset")
 			ch <- "reset"
 		case "t":
-			// go send(ch, "stop")
 			ch <- "stop"
+		case "a":
+			ch <- "status"
 		default:
 			fmt.Println("*********************")
 			fmt.Println("** Unknown command **")
@@ -68,10 +66,6 @@ func main() {
 	}
 
 	fmt.Println("Goodbye.")
-}
-
-func send(ch chan string, msg string) {
-	ch <- msg
 }
 
 func printHelp() {

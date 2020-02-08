@@ -48,13 +48,20 @@ func New(config interfaces.IConfig) interfaces.ILogger {
 	o.infoFile = infoFile
 	o.errorFile = errorFile
 
+	o.LogInfo("All Log files have been opened")
 	return o
 }
 
 // Close flushes and closes all log files. Use it with defer
 func (l *logg) Close() {
-	l.infoFile.Close()
-	l.errorFile.Close()
+	err := l.infoFile.Close()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = l.errorFile.Close()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func logToFile(file *os.File, msg string) {

@@ -1,6 +1,7 @@
 package simulation
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wdevore/Deuron8-Go/config"
@@ -12,8 +13,9 @@ var completed = false
 
 var debug = 0
 
-// Entry is the main simulation entry point
-func Entry(c chan string) {
+// Boot is the simulation bootstrap. The simulation isn't
+// running until told to do so.
+func Boot(c chan string) {
 	debug = 0
 	loop := true
 	running := false
@@ -25,7 +27,7 @@ func Entry(c chan string) {
 			case "exit":
 				if running {
 					config.API.SetExitState("Terminated")
-					logg.API.LogInfo("Terminating Exiting simulation...")
+					logg.API.LogInfo("Terminating simulation...")
 				} else {
 					if !completed {
 						config.API.SetExitState("Exited")
@@ -34,6 +36,8 @@ func Entry(c chan string) {
 				loop = false
 			case "run":
 				if running {
+					// Starting a run while the sim is already running
+					// isn't allowed.
 					continue
 				}
 				logg.API.LogInfo("Simulation starting...")
@@ -41,22 +45,32 @@ func Entry(c chan string) {
 				running = true
 				completed = false
 			case "pause":
+				if paused {
+					continue
+				}
 				config.API.SetExitState("Paused")
 				logg.API.LogInfo("Simulation paused")
 				paused = true
 			case "resume":
+				if !paused {
+					continue
+				}
 				logg.API.LogInfo("Simulation resumed")
 				paused = false
 			case "reset":
 				logg.API.LogInfo("Simulation resetting...")
 				logg.API.LogInfo("Simulation reset and paused")
 				paused = true
+				running = false
+				completed = false
 			case "stop":
 				config.API.SetExitState("Stopped")
 				logg.API.LogInfo("Stopping simulation...")
 				running = false
 				completed = false
 				logg.API.LogInfo("Simulation stopped before completion")
+			case "status":
+				fmt.Printf("Status: %d\n", debug)
 			}
 		default:
 			if !running {
@@ -64,9 +78,6 @@ func Entry(c chan string) {
 				continue
 			}
 
-			// A simulation runs in chunks. This gives the "application" a chance
-			// to check on user input. A chunk size depends on how long a group
-			// of simulation steps take.
 			if paused {
 				logg.API.LogInfo("-- paused --")
 			} else {
@@ -86,9 +97,15 @@ func Entry(c chan string) {
 	logg.API.LogInfo("Simulation goroutine is exiting...")
 }
 
+// A simulation runs in chunks. This gives the "application" a chance
+// to check on user input. A chunk size depends on how long a group
+// of simulation steps take.
 func simulate() bool {
+	// If we are resuming then we need to reconstruct the environment prior.
+	// Otherwise we prepare the environment and then start the simulation.
+
 	debug++
-	if debug > 5 {
+	if debug > 10 {
 		return false
 	}
 	logg.API.LogInfo("Simulating...")
