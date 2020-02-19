@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/wdevore/Deuron8-Go/interfaces"
+	interfaces "github.com/wdevore/Deuron8-Go/api"
 )
 
 // API is the main logger for the simulation

@@ -40,15 +40,23 @@ func runStimTest(t *testing.T) {
 
 	// 100100100100100000100000000000
 	vis.SetSize("10")
+	// vis.EnablePreCache(false)
 	x = vis.Expand(1000)
 	logg.API.LogInfo(x)
 
 	// 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0
-	xa := vis.GetStimulusComp(1000)
+	xa := vis.GetStimulusComp(45)
+	fmt.Println(xa)
+	xa = vis.GetStimulusComp(1023)
 	fmt.Println(xa)
 
 	vis.SetStimulusAt(454, 500)
 	stim := vis.GetStimulus()
+	fmt.Println(stim)
+	fmt.Println(len(stim))
+
+	vis.SetStimulusFast(454, 500)
+	stim = vis.GetStimulus()
 	fmt.Println(stim)
 	fmt.Println(len(stim))
 }

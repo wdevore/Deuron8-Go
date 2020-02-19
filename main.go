@@ -21,8 +21,8 @@ func init() {
 func main() {
 	fmt.Println("Welcome to Deuron8 Go edition")
 
-	defer config.API.Save()
 	defer logg.API.Close()
+	defer config.API.Save() // Last-in means First-out, this will run before logg-close.
 
 	reader := bufio.NewReader(os.Stdin)
 	printHelp()

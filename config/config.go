@@ -8,11 +8,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wdevore/Deuron8-Go/interfaces"
+	api "github.com/wdevore/Deuron8-Go/api"
 )
 
 // API is the runtime configuration
-var API interfaces.IConfig
+var API api.IConfig
 
 // The JSON data structure
 type configJSON struct {
@@ -30,7 +30,7 @@ type configuration struct {
 }
 
 // New construct an IConfig object
-func New(configFile string) interfaces.IConfig {
+func New(configFile string) api.IConfig {
 	o := new(configuration)
 	o.dirty = false
 	o.configFile = configFile
@@ -69,7 +69,8 @@ func (c *configuration) Save() {
 	}
 
 	indentedJSON, _ := json.MarshalIndent(c.conf, "", "  ")
-	err := ioutil.WriteFile(c.path+c.configFile, indentedJSON, 0644)
+
+	err := ioutil.WriteFile(c.path+"/"+c.configFile, indentedJSON, 0644)
 	if err != nil {
 		log.Fatalln("ERROR:", err)
 	}
