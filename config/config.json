@@ -1,6 +1,7 @@
 {
   "ErrLog": "error.log",
   "InfoLog": "info.log",
-  "ExitState": "Terminated",
-  "LogRoot": "/media/RAMDisk/"
+  "ExitState": "Exited",
+  "LogRoot": "/media/RAMDisk/",
+  "DataRoot": "/media/iposthuman/"
 }

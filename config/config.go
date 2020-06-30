@@ -20,6 +20,7 @@ type configJSON struct {
 	InfoLog   string `json:"InfoLog"`
 	ExitState string `json:"ExitState"`
 	LogRoot   string `json:"LogRoot"`
+	DataRoot  string `json:"DataRoot"`
 }
 
 type configuration struct {
@@ -54,7 +55,7 @@ func New(configFile string) api.IConfig {
 	err = json.NewDecoder(jsonFile).Decode(&o.conf)
 
 	if err != nil {
-		log.Fatalln("ERROR:", err)
+		log.Fatalln("JSON ERROR:", err)
 		return nil
 	}
 
@@ -89,6 +90,10 @@ func (c *configuration) InfoLogFileName() string {
 // LogRoot is the base path to where log files are located.
 func (c *configuration) LogRoot() string {
 	return c.conf.LogRoot
+}
+
+func (c *configuration) DataRoot() string {
+	return c.conf.DataRoot
 }
 
 // ExitState indicates what the last state the

@@ -26,6 +26,6 @@ type Scanline struct {
 
 // Next moves to the next scanline in image
 
-// Configure from either a previous simulation or start new.
+// Load from either a previous simulation or start new.
 
-// Persist the Scanline's connection neuron Ids.
+// Save the Scanline's connection neuron Ids.

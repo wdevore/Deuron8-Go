@@ -9,5 +9,6 @@ type IConfig interface {
 	ExitState() string
 	SetExitState(string)
 
+	DataRoot() string
 	Save()
 }

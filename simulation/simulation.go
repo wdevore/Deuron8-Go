@@ -11,8 +11,6 @@ import (
 var paused = false
 var completed = false
 
-var debug = 0
-
 // Boot is the simulation bootstrap. The simulation isn't
 // running until told to do so.
 func Boot(c chan string) {
@@ -41,6 +39,8 @@ func Boot(c chan string) {
 					continue
 				}
 				logg.API.LogInfo("Simulation starting...")
+				construct()
+
 				logg.API.LogInfo("Simulation running...")
 				running = true
 				completed = false
@@ -95,20 +95,4 @@ func Boot(c chan string) {
 	}
 
 	logg.API.LogInfo("Simulation goroutine is exiting...")
-}
-
-// A simulation runs in chunks. This gives the "application" a chance
-// to check on user input. A chunk size depends on how long a group
-// of simulation steps take.
-func simulate() bool {
-	// If we are resuming then we need to reconstruct the environment prior.
-	// Otherwise we prepare the environment and then start the simulation.
-
-	debug++
-	if debug > 10 {
-		return false
-	}
-	logg.API.LogInfo("Simulating...")
-
-	return true
 }

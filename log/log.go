@@ -28,6 +28,7 @@ func New(config interfaces.IConfig) interfaces.ILogger {
 	var infoFile *os.File
 	var err error
 
+	fmt.Println(config.InfoLogFileName())
 	if config.ExitState() == "Paused" {
 		infoFile, err = os.OpenFile(rootPath+config.InfoLogFileName(), os.O_APPEND|os.O_WRONLY, 0600)
 	} else {
@@ -36,13 +37,13 @@ func New(config interfaces.IConfig) interfaces.ILogger {
 	}
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("LogInfoError: ", err)
 	}
 
 	var errorFile *os.File
 	errorFile, err = os.OpenFile(rootPath+config.ErrLogFileName(), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("LogOpenError: ", err)
 	}
 
 	o.infoFile = infoFile
@@ -56,11 +57,11 @@ func New(config interfaces.IConfig) interfaces.ILogger {
 func (l *logg) Close() {
 	err := l.infoFile.Close()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("LogCloseError: ", err)
 	}
 	err = l.errorFile.Close()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("LogCloseError: ", err)
 	}
 }
 
@@ -71,7 +72,7 @@ func logToFile(file *os.File, msg string) {
 		t.Hour(), t.Minute(), t.Second())
 
 	if _, err := file.WriteString(now + msg + "\n"); err != nil {
-		log.Fatalln(err)
+		log.Fatalln("LogToError: ", err)
 	}
 }
 
