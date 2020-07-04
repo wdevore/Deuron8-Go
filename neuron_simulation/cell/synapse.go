@@ -1,6 +1,11 @@
 package cell
 
-import "github.com/wdevore/Deuron8-Go/neuron_simulation/api"
+import (
+	"math"
+
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
+)
 
 const initialPreT = 0.0 // -1000000000.0
 
@@ -10,7 +15,10 @@ type Synapse struct {
 	dendrite    api.IDendrite
 	compartment api.ICompartment
 
-	id int64
+	simJ     *model.SimJSON
+	simModel api.IModel
+
+	id int
 
 	// true = excititory, false = inhibitory
 	excititory bool
@@ -23,18 +31,6 @@ type Synapse struct {
 
 	// The stream (aka Merger) that feeds into this synapse
 	stream api.IBitStream
-
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Surge
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Surge base value
-	amb float64
-
-	// Surge peak
-	ama float64
-
-	// Surge window
-	tsw float64
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// new surge ion concentration
@@ -61,31 +57,15 @@ type Synapse struct {
 	// Smaller values equals a sharper decay.
 	// -----------------------------------
 
-	// denominator, positive window time decay
-	taoP float64
-
-	// denominator, negative window time decay
-	taoN float64
-
-	// Ratio of mRate/taoX
-	tao float64
-
 	// -----------------------------------
 	// Weight dependence
 	// -----------------------------------
 	// F-(w) = λ⍺w^µ, F+(w) = λ(1-w)^µ
-	mu     float64 // µ
-	lambda float64 // λ
-	alpha  float64 // ⍺
 
 	// -----------------------------------
 	// Suppression
 	// -----------------------------------
-	taoI         float64
 	prevEffTrace float64
-
-	learningRateSlow float64 // Unused
-	learningRateFast float64 // Unused
 
 	// -----------------------------------
 	// Fall off
@@ -104,8 +84,9 @@ type Synapse struct {
 }
 
 // NewSynapse creates a new synapse
-func NewSynapse(soma api.ISoma, dendrite api.IDendrite, compartment api.ICompartment) api.ISynapse {
+func NewSynapse(simModel api.IModel, soma api.ISoma, dendrite api.IDendrite, compartment api.ICompartment) api.ISynapse {
 	o := new(Synapse)
+	o.simModel = simModel
 	o.soma = soma
 	o.dendrite = dendrite
 	o.compartment = compartment
@@ -113,14 +94,28 @@ func NewSynapse(soma api.ISoma, dendrite api.IDendrite, compartment api.ICompart
 	o.preT = initialPreT
 	o.id = 0
 
-	// add_synapse!(compartment, o)
+	simJ, ok := simModel.Data().(*model.SimJSON)
+
+	if !ok {
+		panic("Synapse: can't cast simModel to SimJSON")
+	}
+
+	o.simJ = simJ
+
+	compartment.AddSynapse(o)
 
 	return o
 }
 
 // Initialize pre configures synapse
 func (s *Synapse) Initialize() {
-	// Focus the model on the correct synapse.
+
+	// s.simJ.ActiveSynapse = s.id
+
+	// Calc this synapses's reaction to the AP based on its
+	// distance from the soma.
+	syn := s.simJ.Neuron.Dendrites.Compartments[0].Synapses[s.id]
+	s.distanceEfficacy = s.dendrite.APEfficacy(syn.Distance)
 }
 
 // Reset resets for another sim pass
@@ -131,9 +126,9 @@ func (s *Synapse) Reset() {
 	s.preT = 0.0
 
 	// Reset weights back to best guess values.
-	s.wMax = s.compartment.weight_max
-	s.w = s.wMax / s.compartment.weight_divisor
-
+	comp := s.simJ.Neuron.Dendrites.Compartments[0]
+	s.wMax = comp.WeightMax
+	s.w = s.wMax / comp.WeightDivisor
 }
 
 // SetType Inhibit=false, excititory=true
@@ -142,13 +137,18 @@ func (s *Synapse) SetType(sType bool) {
 }
 
 // PreIntegrate is called prior integration
-func (s *Synapse) PreIntegrate() {}
+func (s *Synapse) PreIntegrate() {
+
+}
 
 // Integrate is the actual integration
-func (s *Synapse) Integrate() {}
+func (s *Synapse) Integrate(spanT, t int) (value, w float64) {
+	return s.tripleIntegration(spanT, t)
+}
 
 // PostIntegrate is called after integration
-func (s *Synapse) PostIntegrate() {}
+func (s *Synapse) PostIntegrate() {
+}
 
 // TripleIntegration advanced
 // =============================================================
@@ -158,18 +158,96 @@ func (s *Synapse) PostIntegrate() {}
 //
 // Depression: fast post trace with at pre spike
 // Potentiation: slow post trace at post spike
-func (s *Synapse) TripleIntegration(spanT, t int64) {}
+func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
+	syn := s.simJ.Neuron.Dendrites.Compartments[0].Synapses[s.id]
+
+	// Calc psp based on current dynamics: (t - preT). As dt increases
+	// psp will decrease asymtotically to zero.
+	dt := float64(t) - s.preT
+
+	dwD := 0.0
+	dwP := 0.0
+	updateWeight := false
+
+	// The output of the stream is the input to this synapse.
+	if s.stream.Output() == 1 {
+		// A spike has arrived on the input to this synapse.
+		// println("(", t, ") syn: ", syn.id)
+
+		if s.excititory {
+			s.surge = s.psp + syn.Ama*math.Exp(-s.psp/syn.TaoP)
+		} else {
+			s.surge = s.psp + syn.Ama*math.Exp(-s.psp/syn.TaoN)
+		}
+
+		// #######################################
+		// Depression LTD
+		// #######################################
+		// Read post trace and adjust weight accordingly.
+		dwD = s.prevEffTrace * s.weightFactor(false, &syn) * s.soma.APFast()
+
+		s.prevEffTrace = s.efficacy(dt, &syn)
+
+		s.preT = float64(t)
+		dt = 0.0
+
+		updateWeight = true
+	}
+
+	if s.excititory {
+		s.psp = s.surge * math.Exp(-dt/syn.TaoP)
+	} else {
+		s.psp = s.surge * math.Exp(-dt/syn.TaoN)
+	}
+
+	// If an AP occurred (from the soma) we read the current psp value and add it to the "w"
+	if s.soma.Output() == 1 {
+		// #######################################
+		// Potentiation LTP
+		// #######################################
+		// Read pre trace (aka psp) and slow AP trace for adjusting weight accordingly.
+		//     Post efficacy                                          weight dependence                 triplet sum
+		dwP = s.soma.EfficacyTrace() * s.distanceEfficacy * s.weightFactor(true, &syn) * (s.psp + s.soma.ApSlowPrior())
+		updateWeight = true
+	}
+
+	// Finally update the weight.
+	if updateWeight {
+		s.w = math.Max(math.Min(s.w+dwP-dwD, s.wMax), s.wMin)
+	}
+
+	// Return the "value" of this synapse for this "t"
+	if s.excititory {
+		value = s.psp * s.w * s.distance
+	} else {
+		value = -s.psp * s.w * s.distance // is inhibitory
+	}
+
+	// Collect this synapse' values at this time step
+	s.simModel.Samples().CollectSynapse(s, spanT)
+
+	return value, s.w
+}
 
 // Efficacy : each spike of pre-synaptic neuron j sets the presynaptic spike
 // efficacy j to 0
 // whereafter it recovers exponentially to 1 with a time constant
 // τj = toaJ
 // In other words, the efficacy of a spike is suppressed by
-// the proximity of a previous spike.
-func (s *Synapse) Efficacy(dt float64) {}
+// the proximity of a trailing spike.
+func (s *Synapse) efficacy(dt float64, syn *model.SynapseJSON) float64 {
+	return 1.0 - math.Exp(-dt/syn.TaoI)
+
+}
 
 // WeightFactor mu = 0.0 = additive, mu = 1.0 = multiplicative
-func (s *Synapse) WeightFactor(potentiation bool) {}
+func (s *Synapse) weightFactor(potentiation bool, syn *model.SynapseJSON) float64 {
+	if potentiation {
+		return syn.Lambda * math.Pow(1.0-syn.W/s.wMax, syn.Mu)
+	}
+
+	return syn.Lambda * syn.Alpha * math.Pow(syn.W/s.wMax, syn.Mu)
+}
 
 // SetStream attaches a spike stream
 func (s *Synapse) SetStream(stream api.IBitStream) {

@@ -8,10 +8,6 @@ type ISynapse interface {
 	SetType(bool) // Inhibit=false, excititory=true
 
 	PreIntegrate()
-	Integrate()
+	Integrate(spanT, t int) (value, w float64)
 	PostIntegrate()
-
-	TripleIntegration(spanT, t int64)
-	Efficacy(dt float64)
-	WeightFactor(potentiation bool)
 }

@@ -12,6 +12,8 @@ import (
 // SimModel is the simulation presistance data
 type SimModel struct {
 	Sim SimJSON
+
+	changed bool
 }
 
 // NewSimModel creates and loads sim data
@@ -46,6 +48,17 @@ func NewSimModel(relativePath, file string) api.IModel {
 }
 
 // Data returns the json loaded app data
-func (m *SimModel) Data() api.IModelData {
+func (m *SimModel) Data() interface{} {
 	return &m.Sim
+}
+
+// SetActiveSynapse ...
+func (m *SimModel) SetActiveSynapse(id int) {
+	m.Sim.ActiveSynapse = id
+	m.changed = true
+}
+
+// Samples returns the simulation samples
+func (m *SimModel) Samples() api.ISamples {
+	return nil
 }

@@ -14,6 +14,8 @@ type Model struct {
 	Config ConfigJSON
 
 	relativePath string
+
+	samples api.ISamples
 }
 
 // NewModel creates and loads app data
@@ -46,10 +48,21 @@ func NewModel(relativePath, file string) api.IModel {
 		panic(err)
 	}
 
+	// o.samples =
+
 	return o
 }
 
 // Data returns the json loaded app data
-func (m *Model) Data() api.IModelData {
+func (m *Model) Data() interface{} {
 	return &m.Config
+}
+
+// SetActiveSynapse not used
+func (m *Model) SetActiveSynapse(id int) {
+}
+
+// Samples returns the simulation samples
+func (m *Model) Samples() api.ISamples {
+	return m.samples
 }
