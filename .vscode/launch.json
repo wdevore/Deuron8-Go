@@ -7,6 +7,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch test function",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/neuron_simulation/",
+            "args": [
+                "-test.run",
+                "-count=1",
+                "-v",
+                "axon_test.go"
+            ]
+        },
+        {
             "name": "Debug Sim",
             "type": "go",
             "request": "launch",

@@ -9,9 +9,6 @@ import (
 // a) Just poisson input
 // b) Poisson and Stimulus
 type Axon struct {
-	length float32
-	input  int
-	output int
 }
 
 // NewAxon creates an axon.
@@ -23,23 +20,29 @@ func NewAxon() api.IAxon {
 
 // Reset axon
 func (a *Axon) Reset() {
-	a.input = 0
-	a.output = 0
+}
+
+func (a *Axon) Set(v int) {
+}
+
+func (a *Axon) SetNoDelay() {
+}
+
+func (a *Axon) SetToMaxDelay() {
+}
+
+func (a *Axon) SetToHalfDelay() {
 }
 
 // Output of axon that terminates with synapses
 func (a *Axon) Output() int {
-	return a.output
+	return 0
 }
 
 // Input from Soma to axon's hillock.
 func (a *Axon) Input(spike int) {
-	a.input = spike
 }
 
 // Step output
 func (a *Axon) Step() {
-	// Instantanious traversal down axon.
-	// Other axon types would implement a delay or shift register.
-	a.output = a.input
 }

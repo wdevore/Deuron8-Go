@@ -224,7 +224,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	}
 
 	// Collect this synapse' values at this time step
-	s.simModel.Samples().CollectSynapse(s, spanT)
+	s.simModel.Samples().CollectSynapse(s, t)
 
 	return value, s.w
 }

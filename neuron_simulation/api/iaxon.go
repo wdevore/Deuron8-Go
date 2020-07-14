@@ -6,4 +6,9 @@ type IAxon interface {
 	Input(int)
 	Output() int
 	Step()
+
+	Set(int)
+	SetNoDelay()
+	SetToMaxDelay()
+	SetToHalfDelay()
 }
