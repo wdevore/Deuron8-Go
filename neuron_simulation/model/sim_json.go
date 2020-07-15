@@ -22,7 +22,7 @@ type CompartmentJSON struct {
 	WeightMax     float64
 	ID            int
 	WeightDivisor float64
-	Synapses      []SynapseJSON
+	Synapses      []*SynapseJSON
 }
 
 // DendriteJSON is dendrite persisted data
@@ -31,7 +31,7 @@ type DendriteJSON struct {
 	TaoEff       float64
 	MinPSPValue  float64
 	ID           int
-	Compartments []CompartmentJSON
+	Compartments []*CompartmentJSON
 }
 
 // NeuronJSON is neuron persisted data
@@ -47,7 +47,7 @@ type NeuronJSON struct {
 	Threshold        float64
 	RefractoryPeriod float64
 	SlowSurge        float64
-	Dendrites        DendriteJSON
+	Dendrites        *DendriteJSON
 }
 
 // SimJSON is simulation persisted data
@@ -61,5 +61,5 @@ type SimJSON struct {
 	PoissonPatternMax           float64
 	PoissonPatternMin           float64
 	StimulusScaler              float64
-	Neuron                      NeuronJSON
+	Neuron                      *NeuronJSON
 }

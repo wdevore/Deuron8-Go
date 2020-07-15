@@ -20,12 +20,13 @@ func BuildSynapsePanel(config, sim api.IModel) {
 	if imgui.CollapsingHeader("Synapse") {
 		simData, _ := sim.Data().(*model.SimJSON)
 		activeSyn = simData.ActiveSynapse
-		synapse := simData.Neuron.Dendrites.Compartments[0].Synapses[activeSyn]
+		synapses := simData.Neuron.Dendrites.Compartments[0].Synapses
+		activeSynapse := synapses[activeSyn]
 
 		imgui.PushItemWidth(80)
 
 		// Row 1 *****************************************************
-		textBuffer = fmt.Sprintf("%3.3f", synapse.Alpha)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.Alpha)
 		entered := imgui.InputTextV(
 			"Alpha", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -39,12 +40,18 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Alpha: ", fv)
 				sim.Changed()
-				synapse.Alpha = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.Alpha = fv
+					}
+				} else {
+					activeSynapse.Alpha = fv
+				}
 			}
 		}
 		imgui.SameLineV(150, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.Ama)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.Ama)
 		entered = imgui.InputTextV(
 			"Ama", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -58,12 +65,18 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Ama: ", fv)
 				sim.Changed()
-				synapse.Ama = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.Ama = fv
+					}
+				} else {
+					activeSynapse.Ama = fv
+				}
 			}
 		}
 		imgui.SameLineV(300, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.Amb)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.Amb)
 		entered = imgui.InputTextV(
 			"Amb", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -77,12 +90,18 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Amb: ", fv)
 				sim.Changed()
-				synapse.Amb = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.Amb = fv
+					}
+				} else {
+					activeSynapse.Amb = fv
+				}
 			}
 		}
 
 		// Row 2 *****************************************************
-		textBuffer = fmt.Sprintf("%3.3f", synapse.Lambda)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.Lambda)
 		entered = imgui.InputTextV(
 			"Lambda", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -96,13 +115,19 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Lambda: ", fv)
 				sim.Changed()
-				synapse.Lambda = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.Lambda = fv
+					}
+				} else {
+					activeSynapse.Lambda = fv
+				}
 			}
 		}
 
 		imgui.SameLineV(150, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.LearningRateFast)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.LearningRateFast)
 		entered = imgui.InputTextV(
 			"Fast Learn Rate", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -116,13 +141,19 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Fast Learn Rate: ", fv)
 				sim.Changed()
-				synapse.LearningRateFast = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.LearningRateFast = fv
+					}
+				} else {
+					activeSynapse.LearningRateFast = fv
+				}
 			}
 		}
 
 		imgui.SameLineV(350, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.LearningRateSlow)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.LearningRateSlow)
 		entered = imgui.InputTextV(
 			"Slow Learn Rate", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -136,12 +167,18 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Slow Learn Rate: ", fv)
 				sim.Changed()
-				synapse.LearningRateSlow = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.LearningRateSlow = fv
+					}
+				} else {
+					activeSynapse.LearningRateSlow = fv
+				}
 			}
 		}
 
 		// Row 3 *****************************************************
-		textBuffer = fmt.Sprintf("%3.3f", synapse.Mu)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.Mu)
 		entered = imgui.InputTextV(
 			"Mu", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -155,13 +192,19 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Mu: ", fv)
 				sim.Changed()
-				synapse.Mu = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.Mu = fv
+					}
+				} else {
+					activeSynapse.Mu = fv
+				}
 			}
 		}
 
 		imgui.SameLineV(150, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.TaoI)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.TaoI)
 		entered = imgui.InputTextV(
 			"TaoI", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -175,13 +218,19 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("TaoI: ", fv)
 				sim.Changed()
-				synapse.TaoI = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.TaoI = fv
+					}
+				} else {
+					activeSynapse.TaoI = fv
+				}
 			}
 		}
 
 		imgui.SameLineV(300, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.TaoN)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.TaoN)
 		entered = imgui.InputTextV(
 			"TaoN", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -195,12 +244,18 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("TaoN: ", fv)
 				sim.Changed()
-				synapse.TaoN = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.TaoN = fv
+					}
+				} else {
+					activeSynapse.TaoN = fv
+				}
 			}
 		}
 
 		// Row 4 *****************************************************
-		textBuffer = fmt.Sprintf("%3.3f", synapse.TaoP)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.TaoP)
 		entered = imgui.InputTextV(
 			"TaoP", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -214,13 +269,19 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("TaoP: ", fv)
 				sim.Changed()
-				synapse.TaoP = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.TaoP = fv
+					}
+				} else {
+					activeSynapse.TaoP = fv
+				}
 			}
 		}
 
 		imgui.SameLineV(150, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", synapse.W)
+		textBuffer = fmt.Sprintf("%3.3f", activeSynapse.W)
 		entered = imgui.InputTextV(
 			"Weight", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -234,7 +295,13 @@ func BuildSynapsePanel(config, sim api.IModel) {
 			if err == nil {
 				fmt.Println("Weight: ", fv)
 				sim.Changed()
-				synapse.W = fv
+				if applyToAll {
+					for _, syn := range synapses {
+						syn.W = fv
+					}
+				} else {
+					activeSynapse.W = fv
+				}
 			}
 		}
 
@@ -248,7 +315,6 @@ func BuildSynapsePanel(config, sim api.IModel) {
 		}
 		imgui.PopItemWidth()
 
-		// TODO complete
 		changed := imgui.Checkbox("Apply To All", &applyToAll)
 		if changed {
 			config.Changed()
