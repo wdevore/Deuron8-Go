@@ -6,7 +6,7 @@ import (
 )
 
 type neuron struct {
-	// 
+	//
 }
 
 // New constructs an INeuron object
@@ -16,6 +16,7 @@ func New() api.INeuron {
 }
 
 func (n *neuron) Integrate() float64 {
+	return 0.0
 }
 
 func (n *neuron) Next() {

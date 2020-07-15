@@ -2,6 +2,9 @@ package model
 
 // ConfigJSON is a reflection of config.json
 type ConfigJSON struct {
+	AutoSave                 bool
+	WindowWidth              int
+	WindowHeight             int
 	Simulation               string
 	OutputSomaAPFastFiles    string
 	DataPath                 string

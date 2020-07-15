@@ -1,22 +1,20 @@
-package main
+package gui
 
 import (
 	"fmt"
 
 	"github.com/inkyblackness/imgui-go/v2"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 )
 
-func buildMainPanel() {
-	imgui.SetNextWindowPos(imgui.Vec2{0.0, 20.0})
+// BuildMainPanel ...
+func BuildMainPanel(config api.IModel) {
+	// imgui.SetNextWindowPos(imgui.Vec2{X: 0.0, Y: 20.0})
 
 	imgui.Begin("Main Panel")
 
 	if imgui.Button("Simulate") {
-		if autosave {
-			fmt.Println("Saving model data.")
-		}
-
-		// Transfer any changed GUI data to simulation
+		// Transfer any changed simulation-properties to simulation
 
 		// Reset samples for this new simulation pass
 

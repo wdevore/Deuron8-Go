@@ -31,7 +31,7 @@ type GLFW struct {
 }
 
 // NewGLFW attempts to initialize a GLFW context.
-func NewGLFW(title string, io imgui.IO, clientAPI GLFWClientAPI) (*GLFW, error) {
+func NewGLFW(title string, width, height int, io imgui.IO, clientAPI GLFWClientAPI) (*GLFW, error) {
 	runtime.LockOSThread()
 
 	err := glfw.Init()
@@ -53,12 +53,13 @@ func NewGLFW(title string, io imgui.IO, clientAPI GLFWClientAPI) (*GLFW, error) 
 		return nil, ErrUnsupportedClientAPI
 	}
 
-	window, err := glfw.CreateWindow(windowWidth, windowHeight, title, nil, nil)
+	window, err := glfw.CreateWindow(width, height, title, nil, nil)
 	if err != nil {
 		glfw.Terminate()
 		return nil, fmt.Errorf("failed to create window: %w", err)
 	}
 	window.MakeContextCurrent()
+
 	glfw.SwapInterval(1)
 
 	platform := &GLFW{

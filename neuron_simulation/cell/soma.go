@@ -142,8 +142,8 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 
 			// Surge from action potential
 
-			s.nFastSurge = s.APMax + s.apFast*nMod.NFastSurge*math.Exp(-s.apFast/nMod.Ntao)
-			s.nSlowSurge = s.APMax + s.apSlow*nMod.NSlowSurge*math.Exp(-s.apSlow/nMod.NtaoS)
+			s.nFastSurge = s.APMax + s.apFast*nMod.FastSurge*math.Exp(-s.apFast/nMod.Tao)
+			s.nSlowSurge = s.APMax + s.apSlow*nMod.SlowSurge*math.Exp(-s.apSlow/nMod.TaoS)
 
 			// Reset time deltas
 			s.preT = float64(t)
@@ -155,8 +155,8 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 	s.apSlowPrior = s.apSlow
 
 	// println(soma.nFastSurge, ", ", soma.nSlowSurge, ", ", soma.ntao, ", ", soma.ntaoS)
-	s.apFast = s.nFastSurge * math.Exp(-dt/nMod.Ntao)
-	s.apSlow = s.nSlowSurge * math.Exp(-dt/nMod.NtaoS)
+	s.apFast = s.nFastSurge * math.Exp(-dt/nMod.Tao)
+	s.apSlow = s.nSlowSurge * math.Exp(-dt/nMod.TaoS)
 
 	// Collect this soma' values at this time step
 	s.simModel.Samples().CollectSoma(s, t)
@@ -182,7 +182,7 @@ func (s *Soma) EfficacyTrace() float64 {
 // Efficacy based on TaoJ
 func (s *Soma) Efficacy(dt float64) float64 {
 	nMod := s.simJ.Neuron
-	return 1.0 - math.Exp(-dt/nMod.NtaoJ)
+	return 1.0 - math.Exp(-dt/nMod.TaoJ)
 
 }
 

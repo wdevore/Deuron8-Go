@@ -36,17 +36,17 @@ type DendriteJSON struct {
 
 // NeuronJSON is neuron persisted data
 type NeuronJSON struct {
-	Ntao             float64
-	NFastSurge       float64
+	Tao              float64
+	FastSurge        float64
 	WMax             float64
-	NtaoJ            float64
+	TaoJ             float64
 	WMin             float64
 	ID               int
-	NtaoS            float64
+	TaoS             float64
 	APMax            float64
 	Threshold        float64
 	RefractoryPeriod float64
-	NSlowSurge       float64
+	SlowSurge        float64
 	Dendrites        DendriteJSON
 }
 
@@ -58,8 +58,8 @@ type SimJSON struct {
 	PercentOfExcititorySynapses float64
 	Hertz                       float64
 	FiringRate                  float64
-	PoissonPatternMax           int
-	PoissonPatternMin           int
-	StimulusScaler              int
+	PoissonPatternMax           float64
+	PoissonPatternMin           float64
+	StimulusScaler              float64
 	Neuron                      NeuronJSON
 }

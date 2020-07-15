@@ -4,6 +4,11 @@ package api
 type IModel interface {
 	Data() interface{}
 
+	Save()
+
+	Changed()
+	Clean()
+
 	SetActiveSynapse(id int)
 
 	Samples() ISamples

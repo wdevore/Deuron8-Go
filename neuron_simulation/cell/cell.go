@@ -45,7 +45,7 @@ func (c *Cell) Reset() {
 }
 
 // Integrate is the actual integration
-func (c *Cell) Integrate(spanT, t int) (psp float64) {
+func (c *Cell) Integrate(spanT, t int) (spike int) {
 	return c.soma.Integrate(spanT, t)
 }
 
