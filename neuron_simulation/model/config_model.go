@@ -32,27 +32,7 @@ func NewConfigModel(relativePath, file string) api.IModel {
 	o.relativePath = relativePath
 	o.file = file
 
-	dataPath, err := filepath.Abs(relativePath)
-	if err != nil {
-		panic(err)
-	}
-
-	eConfFile, err := os.Open(dataPath + file)
-	if err != nil {
-		panic(err)
-	}
-
-	defer eConfFile.Close()
-
-	bytes, err := ioutil.ReadAll(eConfFile)
-	if err != nil {
-		panic(err)
-	}
-
-	err = json.Unmarshal(bytes, &o.Config)
-	if err != nil {
-		panic(err)
-	}
+	o.Load()
 
 	// o.samples =
 
@@ -81,6 +61,31 @@ func (m *Model) Changed() {
 // Clean marks model NOT-dirty
 func (m *Model) Clean() {
 	m.changed = false
+}
+
+// Load model from disk
+func (m *Model) Load() {
+	dataPath, err := filepath.Abs(m.relativePath)
+	if err != nil {
+		panic(err)
+	}
+
+	eConfFile, err := os.Open(dataPath + m.file)
+	if err != nil {
+		panic(err)
+	}
+
+	defer eConfFile.Close()
+
+	bytes, err := ioutil.ReadAll(eConfFile)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(bytes, &m.Config)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // Save model to disk

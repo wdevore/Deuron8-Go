@@ -15,7 +15,7 @@ var (
 )
 
 // BuildMenuBar ...
-func BuildMenuBar(config api.IModel) {
+func BuildMenuBar(config, sim api.IModel) {
 	// ---------------------------------------------------------
 	// Build the application GUI
 	// ---------------------------------------------------------
@@ -32,9 +32,11 @@ func BuildMenuBar(config api.IModel) {
 		if imgui.BeginMenu("Simulation") {
 			if imgui.MenuItem("Load") {
 				fmt.Println("Loading simulation properties")
+				sim.Load()
 			}
 			if imgui.MenuItem("Save") {
 				fmt.Println("Saving simulation properties")
+				sim.Save()
 			}
 			imgui.EndMenu()
 		}

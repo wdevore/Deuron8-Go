@@ -30,27 +30,7 @@ func NewSimModel(relativePath, file string) api.IModel {
 	o.relativePath = relativePath
 	o.file = file
 
-	dataPath, err := filepath.Abs(relativePath)
-	if err != nil {
-		panic(err)
-	}
-
-	eConfFile, err := os.Open(dataPath + file)
-	if err != nil {
-		panic(err)
-	}
-
-	defer eConfFile.Close()
-
-	bytes, err := ioutil.ReadAll(eConfFile)
-	if err != nil {
-		panic(err)
-	}
-
-	err = json.Unmarshal(bytes, &o.Sim)
-	if err != nil {
-		panic(err)
-	}
+	o.Load()
 
 	return o
 }
@@ -81,10 +61,35 @@ func (m *SimModel) Clean() {
 	m.changed = false
 }
 
+// Load model from disk
+func (m *SimModel) Load() {
+	dataPath, err := filepath.Abs(m.relativePath)
+	if err != nil {
+		panic(err)
+	}
+
+	eConfFile, err := os.Open(dataPath + m.file)
+	if err != nil {
+		panic(err)
+	}
+
+	defer eConfFile.Close()
+
+	bytes, err := ioutil.ReadAll(eConfFile)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(bytes, &m.Sim)
+	if err != nil {
+		panic(err)
+	}
+}
+
 // Save model to disk
 func (m *SimModel) Save() {
 	if m.changed {
-		fmt.Println("Saving application properties...")
+		fmt.Println("Saving simulation properties...")
 		indentedJSON, _ := json.MarshalIndent(m.Sim, "", "  ")
 
 		dataPath, err := filepath.Abs(m.relativePath)
@@ -97,6 +102,7 @@ func (m *SimModel) Save() {
 			log.Fatalln("ERROR:", err)
 		}
 
+		m.Clean()
 		fmt.Println("Simulation properties saved")
 	}
 }

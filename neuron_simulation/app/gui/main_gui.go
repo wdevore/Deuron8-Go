@@ -11,7 +11,7 @@ var (
 // BuildGui ...
 func BuildGui(config, sim api.IModel) {
 
-	BuildMenuBar(config)
+	BuildMenuBar(config, sim)
 
 	BuildMainPanel(config)
 

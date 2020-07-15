@@ -4,6 +4,7 @@ package api
 type IModel interface {
 	Data() interface{}
 
+	Load()
 	Save()
 
 	Changed()

@@ -69,7 +69,7 @@ func BuildSimulationPanel(config, sim api.IModel) {
 			} else if actSyn >= int32(simData.Synapses) {
 				actSyn = int32(simData.Synapses) - 1
 			}
-			config.Changed()
+			sim.Changed()
 			fmt.Println("Active Synapse: ", actSyn)
 			simData.ActiveSynapse = int(actSyn)
 		}
