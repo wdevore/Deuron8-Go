@@ -11,6 +11,4 @@ type IModel interface {
 	Clean()
 
 	SetActiveSynapse(id int)
-
-	Samples() ISamples
 }

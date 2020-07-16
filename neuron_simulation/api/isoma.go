@@ -7,6 +7,8 @@ type ISoma interface {
 	Integrate(spanT, t int) (spike int)
 
 	APFast() float64
+	APSlow() float64
+	Psp() float64
 	ApSlowPrior() float64
 	EfficacyTrace() float64
 	Efficacy(dt float64) float64

@@ -4,10 +4,17 @@ package api
 type ISynapse interface {
 	Initialize()
 	Reset()
+
 	SetStream(IBitStream)
 	SetType(bool) // Inhibit=false, excititory=true
 
 	PreIntegrate()
 	Integrate(spanT, t int) (value, w float64)
 	PostIntegrate()
+
+	// Data sample fields
+	ID() int
+	Weight() float64
+	Surge() float64
+	Psp() float64
 }

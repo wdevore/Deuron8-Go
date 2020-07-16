@@ -17,6 +17,7 @@ type Synapse struct {
 
 	simJ     *model.SimJSON
 	simModel api.IModel
+	samples  api.ISamples
 
 	id int
 
@@ -84,9 +85,10 @@ type Synapse struct {
 }
 
 // NewSynapse creates a new synapse
-func NewSynapse(simModel api.IModel, soma api.ISoma, dendrite api.IDendrite, compartment api.ICompartment) api.ISynapse {
+func NewSynapse(simModel api.IModel, samples api.ISamples, soma api.ISoma, dendrite api.IDendrite, compartment api.ICompartment) api.ISynapse {
 	o := new(Synapse)
 	o.simModel = simModel
+	o.samples = samples
 	o.soma = soma
 	o.dendrite = dendrite
 	o.compartment = compartment
@@ -184,9 +186,9 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		// Depression LTD
 		// #######################################
 		// Read post trace and adjust weight accordingly.
-		dwD = s.prevEffTrace * s.weightFactor(false, &syn) * s.soma.APFast()
+		dwD = s.prevEffTrace * s.weightFactor(false, syn) * s.soma.APFast()
 
-		s.prevEffTrace = s.efficacy(dt, &syn)
+		s.prevEffTrace = s.efficacy(dt, syn)
 
 		s.preT = float64(t)
 		dt = 0.0
@@ -207,7 +209,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		// #######################################
 		// Read pre trace (aka psp) and slow AP trace for adjusting weight accordingly.
 		//     Post efficacy                                          weight dependence                 triplet sum
-		dwP = s.soma.EfficacyTrace() * s.distanceEfficacy * s.weightFactor(true, &syn) * (s.psp + s.soma.ApSlowPrior())
+		dwP = s.soma.EfficacyTrace() * s.distanceEfficacy * s.weightFactor(true, syn) * (s.psp + s.soma.ApSlowPrior())
 		updateWeight = true
 	}
 
@@ -224,7 +226,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	}
 
 	// Collect this synapse' values at this time step
-	s.simModel.Samples().CollectSynapse(s, t)
+	s.samples.CollectSynapse(s, t)
 
 	return value, s.w
 }
@@ -252,4 +254,28 @@ func (s *Synapse) weightFactor(potentiation bool, syn *model.SynapseJSON) float6
 // SetStream attaches a spike stream
 func (s *Synapse) SetStream(stream api.IBitStream) {
 	s.stream = stream
+}
+
+// =============================================================
+// Sampling access
+// =============================================================
+
+// ID ...
+func (s *Synapse) ID() int {
+	return s.id
+}
+
+// Weight ...
+func (s *Synapse) Weight() float64 {
+	return s.w
+}
+
+// Surge ...
+func (s *Synapse) Surge() float64 {
+	return s.surge
+}
+
+// Psp ...
+func (s *Synapse) Psp() float64 {
+	return s.psp
 }

@@ -18,8 +18,6 @@ type Model struct {
 	relativePath string
 	file         string
 
-	samples api.ISamples
-
 	changed bool
 }
 
@@ -34,8 +32,6 @@ func NewConfigModel(relativePath, file string) api.IModel {
 
 	o.Load()
 
-	// o.samples =
-
 	return o
 }
 
@@ -46,11 +42,6 @@ func (m *Model) Data() interface{} {
 
 // SetActiveSynapse not used
 func (m *Model) SetActiveSynapse(id int) {
-}
-
-// Samples returns the simulation samples
-func (m *Model) Samples() api.ISamples {
-	return m.samples
 }
 
 // Changed marks model dirty

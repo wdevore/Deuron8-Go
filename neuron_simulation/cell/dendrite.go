@@ -93,7 +93,7 @@ func (d *Dendrite) Integrate(spanT, t int) (psp float64) {
 	d.average = totalWeight / float64(d.synapses)
 
 	// Collect this Dendrite' values at this time step
-	d.simModel.Samples().CollectDendrite(d, spanT)
+	// d.simModel.Samples().CollectDendrite(d, spanT)
 
 	return psp
 }

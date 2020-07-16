@@ -46,11 +46,6 @@ func (m *SimModel) SetActiveSynapse(id int) {
 	m.changed = true
 }
 
-// Samples returns the simulation samples
-func (m *SimModel) Samples() api.ISamples {
-	return nil
-}
-
 // Changed marks model dirty
 func (m *SimModel) Changed() {
 	m.changed = true

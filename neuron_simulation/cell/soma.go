@@ -11,6 +11,7 @@ import (
 type Soma struct {
 	simJ     *model.SimJSON
 	simModel api.IModel
+	samples  api.ISamples
 
 	// Axon is the output
 	axon api.IAxon
@@ -71,8 +72,9 @@ type Soma struct {
 }
 
 // NewSoma creates an Soma.
-func NewSoma(simModel api.IModel) api.ISoma {
+func NewSoma(simModel api.IModel, samples api.ISamples) api.ISoma {
 	o := new(Soma)
+	o.samples = samples
 
 	simJ, ok := simModel.Data().(*model.SimJSON)
 
@@ -159,14 +161,9 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 	s.apSlow = s.nSlowSurge * math.Exp(-dt/nMod.TaoS)
 
 	// Collect this soma' values at this time step
-	s.simModel.Samples().CollectSoma(s, t)
+	s.samples.CollectSoma(s, t)
 
 	return s.axon.Output()
-}
-
-// APFast ...
-func (s *Soma) APFast() float64 {
-	return s.apFast
 }
 
 // ApSlowPrior ...
@@ -186,7 +183,26 @@ func (s *Soma) Efficacy(dt float64) float64 {
 
 }
 
+// =============================================================
+// Sampling access
+// =============================================================
+
 // Output of soma's axon
 func (s *Soma) Output() int {
 	return s.axon.Output()
+}
+
+// APFast ...
+func (s *Soma) APFast() float64 {
+	return s.apFast
+}
+
+// APSlow ...
+func (s *Soma) APSlow() float64 {
+	return s.apSlow
+}
+
+// Psp ...
+func (s *Soma) Psp() float64 {
+	return s.psp
 }
