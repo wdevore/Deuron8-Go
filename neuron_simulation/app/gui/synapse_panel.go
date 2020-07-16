@@ -310,7 +310,7 @@ func BuildSynapsePanel(config, sim api.IModel) {
 		slide := imgui.SliderInt("ActiveSynapse", &activeSynSlide, 0, int32(simData.Synapses)-1)
 		if slide {
 			sim.Changed()
-			fmt.Println("slide: ", activeSynSlide)
+			// fmt.Println("slide: ", activeSynSlide)
 			simData.ActiveSynapse = int(activeSynSlide)
 		}
 		imgui.PopItemWidth()

@@ -7,6 +7,7 @@ import (
 	"github.com/inkyblackness/imgui-go/v2"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/app/gui"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/graphs"
 )
 
 // Platform covers mouse/keyboard/gamepad inputs, cursor shape, timing, windowing.
@@ -60,6 +61,8 @@ func Run(p Platform, r Renderer, config, sim api.IModel) {
 
 	clearColor := [3]float32{0.25, 0.25, 0.25}
 
+	spikeGraph := graphs.NewSpikeGraph()
+
 	// -------------------------------------------------------------
 	// Now start main GUI loop
 	// -------------------------------------------------------------
@@ -68,6 +71,9 @@ func Run(p Platform, r Renderer, config, sim api.IModel) {
 		p.NewFrame()
 
 		imgui.NewFrame()
+
+		vertPos := 40
+		spikeGraph.Draw(config, sim, nil, vertPos)
 
 		gui.BuildGui(config, sim)
 
