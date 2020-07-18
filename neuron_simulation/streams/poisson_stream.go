@@ -83,11 +83,12 @@ func (p *poissonStream) Step() {
 // Output ...
 func (p *poissonStream) Output() int {
 	if p.isi == 0 {
+		// Time to generate a spike
 		p.isi = p.next()
 		return 1
 	}
 
-	p.isi = -1
+	p.isi--
 	return 0
 }
 

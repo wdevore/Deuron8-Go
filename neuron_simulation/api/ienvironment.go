@@ -7,4 +7,12 @@ type IEnvironment interface {
 	Samples() ISamples
 	Stimulus() [][]int
 	StimulusAt(int) []int
+
+	IssueCmd(string)
+	IsCmdIssued() bool
+	CmdIssued()
+	Cmd() string
+
+	AutoStop(bool)
+	IsAutoStop() bool
 }

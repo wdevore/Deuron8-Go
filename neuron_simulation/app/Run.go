@@ -63,6 +63,11 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 
 	spikeGraph := graphs.NewSpikeGraph()
 
+	ch := make(chan string)
+
+	// Start simulation thread. It will idle by default.
+	go simulateCell(ch)
+
 	// -------------------------------------------------------------
 	// Now start main GUI loop
 	// -------------------------------------------------------------
@@ -92,10 +97,48 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 
 		p.PostRender()
 
+		if environment.IsCmdIssued() {
+			ch <- environment.Cmd() // sends message to channel
+			environment.CmdIssued()
+		}
+
 		// sleep to avoid 100% CPU usage
 		<-time.After(sleepDuration)
 	}
 
 	fmt.Println("Exiting application")
 	gui.Shutdown(environment)
+}
+
+func simulateCell(c chan string) {
+	loop := true
+	running := false
+	once := false
+
+	for loop {
+		select {
+		case cmd := <-c:
+			switch cmd {
+			case "stop":
+				fmt.Println("Stopping simulation...")
+				running = false
+			case "start":
+				running = true
+				once = false
+			case "once":
+				once = true
+				running = true
+			}
+		default:
+			if running {
+				fmt.Println("Simulation is running...")
+				if once {
+					running = false
+					fmt.Println("Simulation stopped")
+				}
+			}
+		}
+
+		<-time.After(sleepDuration)
+	}
 }

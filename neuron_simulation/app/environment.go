@@ -19,6 +19,11 @@ type environmentS struct {
 
 	relativePath string
 	basePath     string
+
+	autostop bool
+
+	simChan chan string
+	cmd     string
 }
 
 // NewEnvironment ...
@@ -28,7 +33,7 @@ func NewEnvironment(relativePath, basePath string) api.IEnvironment {
 	o.basePath = basePath
 
 	o.loadProperties()
-
+	o.autostop = false
 	o.samples = datasamples.NewSamples()
 
 	o.loadStimulus()
@@ -132,4 +137,25 @@ func (e *environmentS) Stimulus() [][]int {
 
 func (e *environmentS) StimulusAt(idx int) []int {
 	return e.stimulus[idx]
+}
+
+func (e *environmentS) AutoStop(auto bool) {
+	e.autostop = auto
+}
+
+func (e *environmentS) IsAutoStop() bool {
+	return e.autostop
+}
+
+func (e *environmentS) IssueCmd(cmd string) {
+	e.cmd = cmd
+}
+func (e *environmentS) IsCmdIssued() bool {
+	return e.cmd != ""
+}
+func (e *environmentS) CmdIssued() {
+	e.cmd = ""
+}
+func (e *environmentS) Cmd() string {
+	return e.cmd
 }

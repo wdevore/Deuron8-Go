@@ -11,7 +11,7 @@ import (
 
 var (
 	autosave bool
-	running  bool
+	autostop bool
 )
 
 // BuildMenuBar ...
@@ -55,6 +55,19 @@ func BuildMenuBar(environment api.IEnvironment) {
 					fmt.Println("AutoSave disabled")
 				}
 			}
+
+			autostop = environment.IsAutoStop()
+			changed = imgui.Checkbox("Autostop", &autostop)
+			if changed {
+				config.Changed()
+				environment.AutoStop(autostop)
+				if autostop {
+					fmt.Println("Autostop enabled")
+				} else {
+					fmt.Println("Autostop disabled")
+				}
+			}
+
 			imgui.EndMenu()
 		}
 

@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/inkyblackness/imgui-go/v2"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 )
@@ -19,14 +17,17 @@ func BuildMainPanel(environment api.IEnvironment) {
 		// Reset samples for this new simulation pass
 
 		// Now run simulation
-		fmt.Println("Running simulation...")
-		running = true
+		environment.IssueCmd("start")
+	}
+
+	imgui.SameLine()
+	if imgui.Button("Simulate Once") {
+		environment.IssueCmd("once")
 	}
 
 	imgui.SameLine()
 	if imgui.Button("Stop") {
-		fmt.Println("Stopping simulation...")
-		running = false
+		environment.IssueCmd("stop")
 	}
 
 	imgui.End()
