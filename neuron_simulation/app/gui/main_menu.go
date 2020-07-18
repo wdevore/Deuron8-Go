@@ -27,8 +27,11 @@ func BuildMenuBar(environment api.IEnvironment) {
 			if imgui.MenuItem("Exit") {
 				// Save application property settings.
 				config.Save()
-
+				environment.IssueCmd("killSim")
 				os.Exit(0)
+			}
+			if imgui.MenuItem("Kill sim thread") {
+				environment.IssueCmd("killSim")
 			}
 			imgui.EndMenu()
 		}

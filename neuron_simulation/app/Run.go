@@ -68,6 +68,8 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 	// Start simulation thread. It will idle by default.
 	go simulateCell(ch)
 
+	simThreadKilled := false
+
 	// -------------------------------------------------------------
 	// Now start main GUI loop
 	// -------------------------------------------------------------
@@ -97,9 +99,19 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 
 		p.PostRender()
 
-		if environment.IsCmdIssued() {
-			ch <- environment.Cmd() // sends message to channel
-			environment.CmdIssued()
+		if !simThreadKilled {
+			if environment.IsCmdIssued() {
+				fmt.Println("Issuing Cmd: ", environment.Cmd())
+				ch <- environment.Cmd() // sends message to channel
+				if environment.Cmd() == "killSim" {
+					simThreadKilled = true
+				}
+				environment.CmdIssued()
+			}
+		} else {
+			if environment.IsCmdIssued() {
+				fmt.Println("WARNING!! Simulation thread was killed! No commands accepted.")
+			}
 		}
 
 		// sleep to avoid 100% CPU usage
@@ -128,6 +140,8 @@ func simulateCell(c chan string) {
 			case "once":
 				once = true
 				running = true
+			case "killSim":
+				loop = false
 			}
 		default:
 			if running {
@@ -141,4 +155,6 @@ func simulateCell(c chan string) {
 
 		<-time.After(sleepDuration)
 	}
+
+	fmt.Println("Simulation coroutine exited")
 }
