@@ -14,8 +14,9 @@ var (
 )
 
 // BuildGlobalPanel ...
-func BuildGlobalPanel(config api.IModel) {
+func BuildGlobalPanel(environment api.IEnvironment) {
 	imgui.Begin("Global Panel")
+	config := environment.Config()
 
 	// if imgui.CollapsingHeader("GlobalHdr") {
 	imgui.PushItemWidth(50)

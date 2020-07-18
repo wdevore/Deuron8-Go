@@ -10,8 +10,10 @@ import (
 )
 
 // BuildNeuronPanel is an embedded panel inside the parent Simulation panel
-func BuildNeuronPanel(config, sim api.IModel) {
+func BuildNeuronPanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Neuron") {
+		sim := environment.Sim()
+
 		simData, _ := sim.Data().(*model.SimJSON)
 		neuron := simData.Neuron
 

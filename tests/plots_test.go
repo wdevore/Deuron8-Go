@@ -2,8 +2,9 @@ package plotstests
 
 import (
 	"image/color"
-	"math/rand"
 	"testing"
+
+	"golang.org/x/exp/rand"
 
 	"gonum.org/v1/gonum/stat/distuv"
 	"gonum.org/v1/plot"
@@ -19,7 +20,10 @@ func TestMain(t *testing.T) {
 func plotPoisson(t *testing.T) {
 	// lambda = k (events/time * time-interval)     / n (units)
 	// n = k / l = 50
-	poi := distuv.Poisson{Lambda: 4.0}
+	psource := rand.NewSource(uint64(5000))
+
+	poi := distuv.Poisson{Lambda: 4.0, Src: psource}
+
 	// Draw some random values from the standard normal distribution.
 	v := make(plotter.Values, 1000)
 	for i := range v {
@@ -60,7 +64,7 @@ func plotPoisson(t *testing.T) {
 func plotHistogram(t *testing.T) {
 	// Draw some random values from the standard
 	// normal distribution.
-	rand.Seed(int64(0))
+	rand.Seed(uint64(0))
 	v := make(plotter.Values, 10000)
 	for i := range v {
 		v[i] = rand.NormFloat64()
@@ -97,7 +101,7 @@ func plotHistogram(t *testing.T) {
 }
 
 func plotRandom(t *testing.T) {
-	rand.Seed(int64(0))
+	rand.Seed(uint64(0))
 
 	p, err := plot.New()
 	if err != nil {

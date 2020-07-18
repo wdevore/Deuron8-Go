@@ -8,7 +8,7 @@ import (
 )
 
 // BuildMainPanel ...
-func BuildMainPanel(config api.IModel) {
+func BuildMainPanel(environment api.IEnvironment) {
 	// imgui.SetNextWindowPos(imgui.Vec2{X: 0.0, Y: 20.0})
 
 	imgui.Begin("Main Panel")

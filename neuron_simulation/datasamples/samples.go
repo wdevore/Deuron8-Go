@@ -2,6 +2,9 @@ package datasamples
 
 import "github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 
+// Each synapse has one stream feeding into it.
+// Some could be Noise while others are Stimulus
+
 // SynapseSamples for graphs
 type SynapseSamples struct {
 	t      int
@@ -9,6 +12,7 @@ type SynapseSamples struct {
 	weight float64
 	surge  float64
 	psp    float64
+	input  int // Stimulus
 }
 
 // T ...
@@ -25,6 +29,9 @@ func (y *SynapseSamples) Surge() float64 { return y.surge }
 
 // Psp ...
 func (y *SynapseSamples) Psp() float64 { return y.psp }
+
+// Input ...
+func (y *SynapseSamples) Input() int { return y.input }
 
 // SomaSamples for graphs
 type SomaSamples struct {
@@ -78,12 +85,10 @@ func (s *samples) CollectSynapse(synapse api.ISynapse, t int) {
 			weight: synapse.Weight(),
 			surge:  synapse.Surge(),
 			psp:    synapse.Psp(),
+			// Input is either Noise or Stimulus
+			input: synapse.Input(),
 		},
 	)
-}
-
-func (s *samples) CollectDendrite(dendrite api.IDendrite, t int) {
-
 }
 
 func (s *samples) CollectSoma(soma api.ISoma, t int) {
@@ -104,4 +109,8 @@ func (s *samples) SynapseData() []api.ISynapseSample {
 
 func (s *samples) SomaData() []api.ISomaSample {
 	return s.somaData
+}
+
+func (s *samples) CollectDendrite(dendrite api.IDendrite, t int) {
+
 }

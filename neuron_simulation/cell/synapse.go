@@ -251,7 +251,7 @@ func (s *Synapse) weightFactor(potentiation bool, syn *model.SynapseJSON) float6
 	return syn.Lambda * syn.Alpha * math.Pow(syn.W/s.wMax, syn.Mu)
 }
 
-// SetStream attaches a spike stream
+// SetStream attaches a spike stream.
 func (s *Synapse) SetStream(stream api.IBitStream) {
 	s.stream = stream
 }
@@ -278,4 +278,9 @@ func (s *Synapse) Surge() float64 {
 // Psp ...
 func (s *Synapse) Psp() float64 {
 	return s.psp
+}
+
+// Input ...
+func (s *Synapse) Input() int {
+	return s.stream.Output()
 }

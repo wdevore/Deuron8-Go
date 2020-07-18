@@ -10,8 +10,10 @@ import (
 )
 
 // BuildPoissonPanel is an embedded panel inside the parent Simulation panel
-func BuildPoissonPanel(config, sim api.IModel) {
+func BuildPoissonPanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Poisson") {
+		sim := environment.Sim()
+
 		simData, _ := sim.Data().(*model.SimJSON)
 
 		imgui.PushItemWidth(80)

@@ -14,8 +14,9 @@ var (
 )
 
 // BuildSimulationPanel ...
-func BuildSimulationPanel(config, sim api.IModel) {
+func BuildSimulationPanel(environment api.IEnvironment) {
 	imgui.Begin("Simulation")
+	sim := environment.Sim()
 
 	if imgui.CollapsingHeader("Simulation Global") {
 		simData, _ := sim.Data().(*model.SimJSON)
@@ -77,13 +78,13 @@ func BuildSimulationPanel(config, sim api.IModel) {
 		imgui.PopItemWidth()
 	}
 
-	BuildPoissonPanel(config, sim)
+	BuildPoissonPanel(environment)
 
-	BuildNeuronPanel(config, sim)
+	BuildNeuronPanel(environment)
 
-	BuildDendritePanel(config, sim)
+	BuildDendritePanel(environment)
 
-	BuildSynapsePanel(config, sim)
+	BuildSynapsePanel(environment)
 
 	imgui.End()
 }

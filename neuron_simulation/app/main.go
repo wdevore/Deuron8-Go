@@ -18,25 +18,11 @@ func main() {
 	io := imgui.CurrentIO()
 
 	// -------------------------------------------------------------
-	// Load application property settings
+	// Construct environment
 	// -------------------------------------------------------------
-	config := model.NewConfigModel("../../", "/neuron_simulation/jsondata/config.json")
+	environment := NewEnvironment("../../", "/neuron_simulation/data/")
 
-	moData, ok := config.Data().(*model.ConfigJSON)
-
-	if ok {
-		fmt.Println("Config loaded.")
-		fmt.Println("AutoSave: ", moData.AutoSave)
-	}
-
-	sim := model.NewSimModel("../../", "/neuron_simulation/jsondata/sim_model.json")
-
-	simData, ok := sim.Data().(*model.SimJSON)
-
-	if ok {
-		fmt.Println("Default sim_model loaded.")
-		fmt.Println("Synapses: ", simData.Synapses)
-	}
+	moData, _ := environment.Config().Data().(*model.ConfigJSON)
 
 	// -------------------------------------------------------------
 	// GLFW Window
@@ -59,5 +45,5 @@ func main() {
 	defer renderer.Dispose()
 
 	// Finally run main gui application
-	Run(platform, renderer, config, sim)
+	Run(platform, renderer, environment)
 }

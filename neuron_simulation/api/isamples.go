@@ -19,6 +19,7 @@ type ISynapseSample interface {
 	Weight() float64
 	Surge() float64
 	Psp() float64
+	Input() int
 }
 
 // ISomaSample ...

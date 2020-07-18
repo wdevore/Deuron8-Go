@@ -15,10 +15,13 @@ var (
 )
 
 // BuildMenuBar ...
-func BuildMenuBar(config, sim api.IModel) {
+func BuildMenuBar(environment api.IEnvironment) {
 	// ---------------------------------------------------------
 	// Build the application GUI
 	// ---------------------------------------------------------
+	config := environment.Config()
+	sim := environment.Sim()
+
 	if imgui.BeginMainMenuBar() {
 		if imgui.BeginMenu("System") {
 			if imgui.MenuItem("Exit") {

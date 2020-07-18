@@ -6,6 +6,7 @@ type ISynapse interface {
 	Reset()
 
 	SetStream(IBitStream)
+	Input() int   // Output from stream "into" this synapse
 	SetType(bool) // Inhibit=false, excititory=true
 
 	PreIntegrate()

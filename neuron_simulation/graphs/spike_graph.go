@@ -62,25 +62,27 @@ func NewSpikeGraph() api.IGraph {
 	return o
 }
 
-func (g *spikeGraph) Draw(config, sim api.IModel, samples api.ISamples, vertPos int) {
+func (g *spikeGraph) Draw(environment api.IEnvironment, vertPos int) {
 	imgui.SetNextWindowPosV(imgui.Vec2{X: 0.0, Y: float32(vertPos)}, imgui.ConditionOnce, imgui.Vec2{})
+	config := environment.Config()
 
 	moData, _ := config.Data().(*model.ConfigJSON)
 	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(200 + 20)}, imgui.ConditionAlways)
 
 	imgui.Begin("Spike Graph")
 
-	g.drawHeader(config, sim)
+	g.drawHeader(environment)
 
 	imgui.Separator()
 
-	g.drawGraph(config, sim, samples)
+	g.drawGraph(environment)
 
 	imgui.End()
 }
 
-func (g *spikeGraph) drawHeader(config, sim api.IModel) {
+func (g *spikeGraph) drawHeader(environment api.IEnvironment) {
 	if imgui.TreeNode("Controls##1") {
+		config := environment.Config()
 		imgui.PushItemWidth(200)
 
 		moData, _ := config.Data().(*model.ConfigJSON)
@@ -132,7 +134,7 @@ func (g *spikeGraph) drawHeader(config, sim api.IModel) {
 	}
 }
 
-func (g *spikeGraph) drawGraph(config, sim api.IModel, samples api.ISamples) {
+func (g *spikeGraph) drawGraph(environment api.IEnvironment) {
 	drawList := imgui.WindowDrawList()
 	canvasPos := imgui.CursorScreenPos()
 	canvasSize := imgui.ContentRegionAvail()
@@ -168,9 +170,26 @@ func (g *spikeGraph) drawGraph(config, sim api.IModel, samples api.ISamples) {
 
 	drawList.AddRect(g.toolTipMinCorner, g.toolTipMaxCorner, g.toolTipForgroundColor)
 
-	g.drawData(config, sim, samples)
+	g.drawNoise(environment)
+
+	g.drawData(environment)
 }
 
-func (g *spikeGraph) drawData(config, sim api.IModel, samples api.ISamples) {
+func (g *spikeGraph) drawData(environment api.IEnvironment) {
+	samples := environment.Samples()
+	// drawList := imgui.WindowDrawList()
+	// canvasPos := imgui.CursorScreenPos()
 
+	// We can't render anything until sample data is present
+	soma := samples.SomaData()
+
+	if len(soma) == 0 {
+		return
+	}
+
+	// io := imgui.CurrentIO()
+
+}
+
+func (g *spikeGraph) drawNoise(environment api.IEnvironment) {
 }

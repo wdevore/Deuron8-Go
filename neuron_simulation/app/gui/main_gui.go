@@ -9,18 +9,18 @@ var (
 )
 
 // BuildGui ...
-func BuildGui(config, sim api.IModel) {
+func BuildGui(environment api.IEnvironment) {
 
-	BuildMenuBar(config, sim)
+	BuildMenuBar(environment)
 
-	BuildMainPanel(config)
+	BuildMainPanel(environment)
 
-	BuildGlobalPanel(config)
+	BuildGlobalPanel(environment)
 
-	BuildSimulationPanel(config, sim)
+	BuildSimulationPanel(environment)
 }
 
 // Shutdown saves config
-func Shutdown(config api.IModel) {
-	config.Save()
+func Shutdown(environment api.IEnvironment) {
+	environment.Config().Save()
 }

@@ -9,9 +9,10 @@ import (
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
 )
 
-// BuildNeuronPanel is an embedded panel inside the parent Simulation panel
-func BuildDendritePanel(config, sim api.IModel) {
+// BuildDendritePanel is an embedded panel inside the parent Simulation panel
+func BuildDendritePanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Dendrite") {
+		sim := environment.Sim()
 		simData, _ := sim.Data().(*model.SimJSON)
 		dendrite := simData.Neuron.Dendrites
 

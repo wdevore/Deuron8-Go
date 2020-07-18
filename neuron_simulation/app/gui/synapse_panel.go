@@ -16,8 +16,11 @@ var (
 )
 
 // BuildSynapsePanel is an embedded panel inside the parent Simulation panel
-func BuildSynapsePanel(config, sim api.IModel) {
+func BuildSynapsePanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Synapse") {
+		sim := environment.Sim()
+		config := environment.Config()
+
 		simData, _ := sim.Data().(*model.SimJSON)
 		activeSyn = simData.ActiveSynapse
 		synapses := simData.Neuron.Dendrites.Compartments[0].Synapses

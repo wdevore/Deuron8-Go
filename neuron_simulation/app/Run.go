@@ -56,7 +56,7 @@ const (
 )
 
 // Run implements the main program loop of the app. It returns when the platform signals to stop.
-func Run(p Platform, r Renderer, config, sim api.IModel) {
+func Run(p Platform, r Renderer, environment api.IEnvironment) {
 	imgui.CurrentIO().SetClipboard(clipboard{platform: p})
 
 	clearColor := [3]float32{0.25, 0.25, 0.25}
@@ -73,9 +73,9 @@ func Run(p Platform, r Renderer, config, sim api.IModel) {
 		imgui.NewFrame()
 
 		vertPos := 40
-		spikeGraph.Draw(config, sim, nil, vertPos)
+		spikeGraph.Draw(environment, vertPos)
 
-		gui.BuildGui(config, sim)
+		gui.BuildGui(environment)
 
 		imgui.EndFrame()
 		// ---------------------------------------------------------
@@ -97,5 +97,5 @@ func Run(p Platform, r Renderer, config, sim api.IModel) {
 	}
 
 	fmt.Println("Exiting application")
-	gui.Shutdown(config)
+	gui.Shutdown(environment)
 }
