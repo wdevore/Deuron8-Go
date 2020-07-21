@@ -49,6 +49,11 @@ func (c *Cell) Integrate(spanT, t int) (spike int) {
 	return c.soma.Integrate(spanT, t)
 }
 
+// Step after integration
+func (c *Cell) Step() {
+	c.soma.Step()
+}
+
 // Output of Cell
 func (c *Cell) Output() int {
 	return c.soma.Output()

@@ -22,6 +22,7 @@ func NewCompartment(simModel api.IModel, dendrite api.IDendrite, soma api.ISoma)
 	o := new(Compartment)
 	o.synapses = []api.ISynapse{}
 	o.soma = soma
+	o.dendrite = dendrite
 
 	simJ, ok := simModel.Data().(*model.SimJSON)
 

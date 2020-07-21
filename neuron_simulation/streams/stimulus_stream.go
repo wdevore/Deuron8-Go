@@ -1,7 +1,6 @@
 package streams
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -57,13 +56,13 @@ func NewStimulusStream(pattern []int, frequency int) api.IBitStream {
 	period := 1.0 / float64(frequency)
 	o.ipi = int(math.Round(period*milliseconds)) - patternLength
 
-	fmt.Println("-------------------------------")
-	fmt.Println("StimulusStream properties:")
-	fmt.Println("period: ", period)
-	fmt.Println("pattern presented every: ", period*1000, " ms")
-	fmt.Println("patternLength: ", patternLength)
-	fmt.Println("ipi: ", o.ipi)
-	fmt.Println("-------------------------------")
+	// fmt.Println("-------------------------------")
+	// fmt.Println("StimulusStream properties:")
+	// fmt.Println("period: ", period)
+	// fmt.Println("pattern presented every: ", period*1000, " ms")
+	// fmt.Println("patternLength: ", patternLength)
+	// fmt.Println("ipi: ", o.ipi)
+	// fmt.Println("-------------------------------")
 
 	o.Reset()
 

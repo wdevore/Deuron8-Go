@@ -10,7 +10,7 @@ type neuron struct {
 }
 
 // New constructs an INeuron object
-func New() api.INeuron {
+func NewNeuron() api.INeuron {
 	o := new(neuron)
 	return o
 }

@@ -61,7 +61,7 @@ type SimJSON struct {
 	// 10Hz = 10 applied in 1000ms or every 100ms = 1000/10Hz
 	// This means a stimulus is generated every 100ms which also means the
 	// Inter-spike-interval (ISI) is fixed at 100ms
-	Hertz float64
+	Hertz int
 	// Firing rate = spikes over an interval of time or
 	// Poisson events per interval of time.
 	// For example, spikes in a 1 sec span.
@@ -71,5 +71,6 @@ type SimJSON struct {
 	PoissonPatternMax float64
 	PoissonPatternMin float64
 	StimulusScaler    float64
+	NoiseCount        int
 	Neuron            *NeuronJSON
 }

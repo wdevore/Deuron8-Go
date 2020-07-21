@@ -7,6 +7,7 @@ import (
 	"github.com/inkyblackness/imgui-go/v2"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/app/gui"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/cellsimulation"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/graphs"
 )
 
@@ -55,8 +56,8 @@ const (
 	sleepDuration   = time.Millisecond * 33
 )
 
-// Run implements the main program loop of the app. It returns when the platform signals to stop.
-func Run(p Platform, r Renderer, environment api.IEnvironment) {
+// run implements the main program loop of the app. It returns when the platform signals to stop.
+func run(p Platform, r Renderer, environment api.IEnvironment) {
 	imgui.CurrentIO().SetClipboard(clipboard{platform: p})
 
 	clearColor := [3]float32{0.25, 0.25, 0.25}
@@ -65,8 +66,11 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 
 	ch := make(chan string)
 
+	simulator := cellsimulation.NewSimulator(environment)
+	simulator.Build()
+
 	// Start simulation thread. It will idle by default.
-	go simulateCell(ch)
+	go simulator.Run(ch)
 
 	simThreadKilled := false
 
@@ -101,9 +105,10 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 
 		if !simThreadKilled {
 			if environment.IsCmdIssued() {
-				fmt.Println("Issuing Cmd: ", environment.Cmd())
+				// fmt.Println("Issuing Cmd: ", environment.Cmd())
 				ch <- environment.Cmd() // sends message to channel
 				if environment.Cmd() == "killSim" {
+					fmt.Println("Killing simulator thread")
 					simThreadKilled = true
 				}
 				environment.CmdIssued()
@@ -120,41 +125,4 @@ func Run(p Platform, r Renderer, environment api.IEnvironment) {
 
 	fmt.Println("Exiting application")
 	gui.Shutdown(environment)
-}
-
-func simulateCell(c chan string) {
-	loop := true
-	running := false
-	once := false
-
-	for loop {
-		select {
-		case cmd := <-c:
-			switch cmd {
-			case "stop":
-				fmt.Println("Stopping simulation...")
-				running = false
-			case "start":
-				running = true
-				once = false
-			case "once":
-				once = true
-				running = true
-			case "killSim":
-				loop = false
-			}
-		default:
-			if running {
-				fmt.Println("Simulation is running...")
-				if once {
-					running = false
-					fmt.Println("Simulation stopped")
-				}
-			}
-		}
-
-		<-time.After(sleepDuration)
-	}
-
-	fmt.Println("Simulation coroutine exited")
 }

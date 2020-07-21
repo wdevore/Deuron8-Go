@@ -42,7 +42,7 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 
 		imgui.SameLineV(200, 10)
 		// ----------------------------------------------------------
-		textBuffer = fmt.Sprintf("%3.3f", simData.Hertz)
+		textBuffer = fmt.Sprintf("%d", simData.Hertz)
 		entered = imgui.InputTextV(
 			"Hertz", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -51,11 +51,11 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 			nil)
 
 		if entered {
-			fv, err := strconv.ParseFloat(textBuffer, 64)
+			fv, err := strconv.ParseInt(textBuffer, 10, 64)
 			if err == nil {
 				fmt.Println("Hertz: ", fv)
 				sim.Changed()
-				simData.Hertz = fv
+				simData.Hertz = int(fv)
 			}
 		}
 

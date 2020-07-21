@@ -8,6 +8,7 @@
   "PoissonPatternMax": 300,
   "PoissonPatternMin": 50,
   "StimulusScaler": 9,
+  "NoiseCount": 10,
   "Neuron": {
     "Tao": 10,
     "FastSurge": 20,

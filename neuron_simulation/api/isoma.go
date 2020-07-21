@@ -5,6 +5,10 @@ type ISoma interface {
 	Initialize()
 	Reset()
 	Integrate(spanT, t int) (spike int)
+	Step()
+
+	SetDendrite(IDendrite)
+	SetAxon(IAxon)
 
 	APFast() float64
 	APSlow() float64

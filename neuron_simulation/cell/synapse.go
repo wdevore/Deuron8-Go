@@ -239,7 +239,6 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 // the proximity of a trailing spike.
 func (s *Synapse) efficacy(dt float64, syn *model.SynapseJSON) float64 {
 	return 1.0 - math.Exp(-dt/syn.TaoI)
-
 }
 
 // WeightFactor mu = 0.0 = additive, mu = 1.0 = multiplicative

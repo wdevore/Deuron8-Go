@@ -12,10 +12,12 @@ import (
 )
 
 type environmentS struct {
-	config   api.IModel
-	sim      api.IModel
-	samples  api.ISamples
-	stimulus [][]int
+	config  api.IModel
+	sim     api.IModel
+	samples api.ISamples
+
+	stimulus          [][]int
+	stimulusStreamCnt int
 
 	relativePath string
 	basePath     string
@@ -89,6 +91,7 @@ func (e *environmentS) loadStimulus() {
 		}
 
 		e.stimulus = append(e.stimulus, expanded)
+		e.stimulusStreamCnt++
 	}
 }
 
@@ -129,6 +132,10 @@ func (e *environmentS) Sim() api.IModel {
 
 func (e *environmentS) Samples() api.ISamples {
 	return e.samples
+}
+
+func (e *environmentS) StimulusCount() int {
+	return e.stimulusStreamCnt
 }
 
 func (e *environmentS) Stimulus() [][]int {

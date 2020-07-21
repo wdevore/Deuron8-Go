@@ -14,7 +14,6 @@ type Dendrite struct {
 	simJ     *model.SimJSON
 	simModel api.IModel
 
-	// These fields are not used yet.
 	taoEff float64
 
 	// Minimum value. Typically 0.0
@@ -64,6 +63,7 @@ func (d *Dendrite) Reset() {
 	for _, compartment := range d.compartments {
 		compartment.Reset()
 	}
+	d.average = 0
 }
 
 // APEfficacy Calc this synapses's reaction to the AP based on its
@@ -91,9 +91,6 @@ func (d *Dendrite) Integrate(spanT, t int) (psp float64) {
 	psp = math.Max(psp, d.minPsp)
 
 	d.average = totalWeight / float64(d.synapses)
-
-	// Collect this Dendrite' values at this time step
-	// d.simModel.Samples().CollectDendrite(d, spanT)
 
 	return psp
 }

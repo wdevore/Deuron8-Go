@@ -89,7 +89,17 @@ func NewSoma(simModel api.IModel, samples api.ISamples) api.ISoma {
 
 // Initialize soma
 func (s *Soma) Initialize() {
+	s.dendrite.Initialize()
+}
 
+// SetDendrite attaches dendrite
+func (s *Soma) SetDendrite(dendrite api.IDendrite) {
+	s.dendrite = dendrite
+}
+
+// SetAxon attaches axon
+func (s *Soma) SetAxon(axon api.IAxon) {
+	s.axon = axon
 }
 
 // Reset soma
@@ -102,6 +112,7 @@ func (s *Soma) Reset() {
 	s.nSlowSurge = 0.0
 	s.nFastSurge = 0.0
 	s.efficacyTrace = 0.0
+	s.psp = 0
 
 	s.axon.Reset()
 	s.dendrite.Reset()
@@ -166,6 +177,11 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 	return s.axon.Output()
 }
 
+// Step after integration
+func (s *Soma) Step() {
+	s.axon.Step()
+}
+
 // ApSlowPrior ...
 func (s *Soma) ApSlowPrior() float64 {
 	return s.apSlowPrior
@@ -180,7 +196,6 @@ func (s *Soma) EfficacyTrace() float64 {
 func (s *Soma) Efficacy(dt float64) float64 {
 	nMod := s.simJ.Neuron
 	return 1.0 - math.Exp(-dt/nMod.TaoJ)
-
 }
 
 // =============================================================

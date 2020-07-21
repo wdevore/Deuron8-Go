@@ -11,7 +11,7 @@ var debug = 0
 var netw api.INetwork
 
 func construct() {
-	netw := network.New()
+	netw := network.NewNetwork()
 
 	netw.Load(config.API)
 }

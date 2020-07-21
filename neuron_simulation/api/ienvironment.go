@@ -5,8 +5,10 @@ type IEnvironment interface {
 	Config() IModel
 	Sim() IModel
 	Samples() ISamples
+
 	Stimulus() [][]int
 	StimulusAt(int) []int
+	StimulusCount() int
 
 	IssueCmd(string)
 	IsCmdIssued() bool

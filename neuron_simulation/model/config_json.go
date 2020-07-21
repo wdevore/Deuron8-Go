@@ -3,6 +3,7 @@ package model
 // ConfigJSON is a reflection of config.json
 type ConfigJSON struct {
 	AutoSave                 bool
+	StepEnabled              bool
 	WindowWidth              int
 	WindowHeight             int
 	Simulation               string
@@ -21,7 +22,7 @@ type ConfigJSON struct {
 	RangeStart               int
 	OutputSynapseWeightFiles string
 	OutputSomaSpikeFiles     string
-	Frequency                int
+	PatternFrequency         int
 	OutputSomaPSPFiles       string
 	Spans                    int
 	OutputSomaAPSlowFiles    string

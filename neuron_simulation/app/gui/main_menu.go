@@ -59,6 +59,16 @@ func BuildMenuBar(environment api.IEnvironment) {
 				}
 			}
 
+			changed = imgui.Checkbox("Step Enabled", &moData.StepEnabled)
+			if changed {
+				config.Changed()
+				if moData.StepEnabled {
+					fmt.Println("Step enabled")
+				} else {
+					fmt.Println("Step disabled")
+				}
+			}
+
 			autostop = environment.IsAutoStop()
 			changed = imgui.Checkbox("Autostop", &autostop)
 			if changed {

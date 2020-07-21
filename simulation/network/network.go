@@ -11,7 +11,7 @@ type network struct {
 }
 
 // New constructs an IVisStimInput object
-func New() api.INetwork {
+func NewNetwork() api.INetwork {
 	o := new(network)
 	return o
 }

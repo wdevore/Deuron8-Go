@@ -45,5 +45,5 @@ func main() {
 	defer renderer.Dispose()
 
 	// Finally run main gui application
-	Run(platform, renderer, environment)
+	run(platform, renderer, environment)
 }

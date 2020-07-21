@@ -1,5 +1,6 @@
 {
   "AutoSave": true,
+  "StepEnabled": true,
   "WindowWidth": 2000,
   "WindowHeight": 1000,
   "Simulation": "sim_1.json",
@@ -18,7 +19,7 @@
   "RangeStart": 277,
   "OutputSynapseWeightFiles": "synapse_weight_samples_span_",
   "OutputSomaSpikeFiles": "soma_spike_samples_span_",
-  "Frequency": 150,
+  "PatternFrequency": 0,
   "OutputSomaPSPFiles": "soma_psp_samples_span_",
   "Spans": 5,
   "OutputSomaAPSlowFiles": "soma_apSlow_samples_span_",

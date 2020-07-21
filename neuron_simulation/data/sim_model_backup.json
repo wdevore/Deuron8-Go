@@ -1,25 +1,42 @@
 {
   "Synapses": 10,
-  "ActiveSynapse": 1,
-  "PoissonPatternspread": 50,
-  "PercentOfExcititorySynapses": 80.0,
-  "Hertz": 5.0,
+  "ActiveSynapse": 3,
+  "PoissonPatternSpread": 50,
+  "PercentOfExcititorySynapses": 80,
+  "Hertz": 5,
   "FiringRate": 0.005,
+  "PoissonPatternMax": 300,
+  "PoissonPatternMin": 50,
+  "StimulusScaler": 9,
+  "NoiseCount": 10,
   "Neuron": {
     "Tao": 10,
+    "FastSurge": 20,
+    "WMax": 10,
+    "TaoJ": 20,
+    "WMin": 0,
+    "ID": 0,
+    "TaoS": 50,
+    "APMax": 20,
+    "Threshold": 20,
+    "RefractoryPeriod": 3,
+    "SlowSurge": 10,
     "Dendrites": {
-      "Length": 1.0,
-      "TaoEff": 10.0,
-      "MinPSPValue": -5.0,
+      "Length": 1,
+      "TaoEff": 10,
+      "MinPSPValue": -5,
       "ID": 0,
       "Compartments": [
         {
+          "WeightMax": 10,
+          "ID": 0,
+          "WeightDivisor": 2,
           "Synapses": [
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.52,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 1,
               "Lambda": 1,
               "Amb": 10.8,
@@ -31,10 +48,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 2,
               "Lambda": 1,
               "Amb": 10.8,
@@ -46,10 +63,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 3,
               "Lambda": 1,
               "Amb": 10.8,
@@ -61,10 +78,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 4,
               "Lambda": 1,
               "Amb": 10.8,
@@ -76,10 +93,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 5,
               "Lambda": 1,
               "Amb": 10.8,
@@ -91,10 +108,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 6,
               "Lambda": 1,
               "Amb": 10.8,
@@ -106,10 +123,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 7,
               "Lambda": 1,
               "Amb": 10.8,
@@ -121,10 +138,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 8,
               "Lambda": 1,
               "Amb": 10.8,
@@ -136,10 +153,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 9,
               "Lambda": 1,
               "Amb": 10.8,
@@ -151,10 +168,10 @@
               "Ama": 1.2
             },
             {
-              "TaoP": 20.0,
-              "TaoN": 33.0,
+              "TaoP": 20,
+              "TaoN": 33,
               "Mu": 0.32,
-              "Distance": 1.0,
+              "Distance": 1,
               "ID": 10,
               "Lambda": 1,
               "Amb": 10.8,
@@ -165,25 +182,9 @@
               "TaoI": 10,
               "Ama": 1.2
             }
-          ],
-          "WeightMax": 10.0,
-          "ID": 0,
-          "WeightDivisor": 2.0
+          ]
         }
       ]
-    },
-    "FastSurge": 20.0,
-    "WMax": 10,
-    "TaoJ": 20.0,
-    "WMin": 0,
-    "ID": 0,
-    "TaoS": 50.0,
-    "APMax": 20,
-    "Threshold": 20.0,
-    "RefractoryPeriod": 3.0,
-    "SlowSurge": 10.0
-  },
-  "PoissonPatternMax": 300,
-  "PoissonPatternMin": 50,
-  "StimulusScaler": 9
+    }
+  }
 }
