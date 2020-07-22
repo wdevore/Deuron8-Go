@@ -4,6 +4,8 @@ package api
 type IEnvironment interface {
 	Config() IModel
 	Sim() IModel
+	Synapses() IModel
+
 	Samples() ISamples
 
 	Stimulus() [][]int

@@ -1,12 +1,11 @@
 package model
 
-// SynapseJSON is synapse persisted data
-type SynapseJSON struct {
+// SynapseDefaultsJSON is default values for a synapses
+type SynapseDefaultsJSON struct {
 	TaoP             float64
 	TaoN             float64
 	Mu               float64
 	Distance         float64
-	ID               int
 	Lambda           float64
 	Amb              float64
 	W                float64
@@ -19,10 +18,10 @@ type SynapseJSON struct {
 
 // CompartmentJSON is compartment persisted data
 type CompartmentJSON struct {
-	WeightMax     float64
-	ID            int
-	WeightDivisor float64
-	Synapses      []*SynapseJSON
+	WeightMax       float64
+	ID              int
+	WeightDivisor   float64
+	SynapseDefaults *SynapseDefaultsJSON
 }
 
 // DendriteJSON is dendrite persisted data

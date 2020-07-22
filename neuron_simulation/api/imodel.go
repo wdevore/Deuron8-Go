@@ -10,5 +10,5 @@ type IModel interface {
 	Changed()
 	Clean()
 
-	SetActiveSynapse(id int)
+	// SetActiveSynapse(id int)
 }

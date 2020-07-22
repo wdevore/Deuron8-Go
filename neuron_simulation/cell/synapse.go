@@ -15,7 +15,10 @@ type Synapse struct {
 	dendrite    api.IDendrite
 	compartment api.ICompartment
 
+	environment api.IEnvironment
+
 	simJ     *model.SimJSON
+	synJ     *model.SynapsesJSON
 	simModel api.IModel
 	samples  api.ISamples
 
@@ -85,24 +88,34 @@ type Synapse struct {
 }
 
 // NewSynapse creates a new synapse
-func NewSynapse(simModel api.IModel, samples api.ISamples, soma api.ISoma, dendrite api.IDendrite, compartment api.ICompartment) api.ISynapse {
+func NewSynapse(environment api.IEnvironment,
+	soma api.ISoma, dendrite api.IDendrite, compartment api.ICompartment,
+	id int) api.ISynapse {
 	o := new(Synapse)
+	o.environment = environment
+
+	simModel := environment.Sim()
 	o.simModel = simModel
-	o.samples = samples
+	o.samples = environment.Samples()
 	o.soma = soma
 	o.dendrite = dendrite
 	o.compartment = compartment
 	o.excititory = true // default to excite type
 	o.preT = initialPreT
-	o.id = 0
+	o.id = id
 
 	simJ, ok := simModel.Data().(*model.SimJSON)
 
 	if !ok {
-		panic("Synapse: can't cast simModel to SimJSON")
+		panic("Synapse: can't cast simModel to model.SimJSON")
 	}
 
 	o.simJ = simJ
+	o.synJ, ok = environment.Synapses().Data().(*model.SynapsesJSON)
+
+	if !ok {
+		panic("Synapse: can't cast simModel to model.SynapsesJSON")
+	}
 
 	compartment.AddSynapse(o)
 
@@ -110,14 +123,16 @@ func NewSynapse(simModel api.IModel, samples api.ISamples, soma api.ISoma, dendr
 }
 
 // Initialize pre configures synapse
-func (s *Synapse) Initialize() {
-
-	// s.simJ.ActiveSynapse = s.id
-
+func (s *Synapse) Initialize(useDefaults bool) {
 	// Calc this synapses's reaction to the AP based on its
 	// distance from the soma.
-	syn := s.simJ.Neuron.Dendrites.Compartments[0].Synapses[s.id]
-	s.distanceEfficacy = s.dendrite.APEfficacy(syn.Distance)
+	if useDefaults {
+		defs := s.simJ.Neuron.Dendrites.Compartments[0].SynapseDefaults
+		s.distanceEfficacy = s.dendrite.APEfficacy(defs.Distance)
+	} else {
+		syn := s.synJ.Synapses[s.id]
+		s.distanceEfficacy = s.dendrite.APEfficacy(syn.Distance)
+	}
 }
 
 // Reset resets for another sim pass
@@ -161,7 +176,7 @@ func (s *Synapse) PostIntegrate() {
 // Depression: fast post trace with at pre spike
 // Potentiation: slow post trace at post spike
 func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
-	syn := s.simJ.Neuron.Dendrites.Compartments[0].Synapses[s.id]
+	syn := s.synJ.Synapses[s.id]
 
 	// Calc psp based on current dynamics: (t - preT). As dt increases
 	// psp will decrease asymtotically to zero.
@@ -262,6 +277,11 @@ func (s *Synapse) SetStream(stream api.IBitStream) {
 // ID ...
 func (s *Synapse) ID() int {
 	return s.id
+}
+
+// SetID ...
+func (s *Synapse) SetID(id int) {
+	s.id = id
 }
 
 // Weight ...

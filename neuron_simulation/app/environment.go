@@ -12,8 +12,10 @@ import (
 )
 
 type environmentS struct {
-	config  api.IModel
-	sim     api.IModel
+	config          api.IModel
+	sim             api.IModel
+	synapsesPersist api.IModel
+
 	samples api.ISamples
 
 	stimulus          [][]int
@@ -35,6 +37,9 @@ func NewEnvironment(relativePath, basePath string) api.IEnvironment {
 	o.basePath = basePath
 
 	o.loadProperties()
+
+	o.loadSynapses()
+
 	o.autostop = false
 	o.samples = datasamples.NewSamples()
 
@@ -122,12 +127,28 @@ func (e *environmentS) loadProperties() {
 	}
 }
 
+func (e *environmentS) loadSynapses() {
+	e.synapsesPersist = model.NewSynapsePersist(e.relativePath, e.basePath+"synapses.json")
+
+	_, ok := e.synapsesPersist.Data().(*model.SynapsesJSON)
+
+	if ok {
+		fmt.Println("Synaptic data loaded.")
+	} else {
+		panic("Failed to load synapses.json")
+	}
+}
+
 func (e *environmentS) Config() api.IModel {
 	return e.config
 }
 
 func (e *environmentS) Sim() api.IModel {
 	return e.sim
+}
+
+func (e *environmentS) Synapses() api.IModel {
+	return e.synapsesPersist
 }
 
 func (e *environmentS) Samples() api.ISamples {

@@ -11,9 +11,9 @@ import (
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 )
 
-// SimModel is the simulation presistance data
-type SimModel struct {
-	Sim *SimJSON
+// SynapsesPersist is synapse presistance data
+type SynapsesPersist struct {
+	Synapses SynapsesJSON
 
 	relativePath string
 	file         string
@@ -21,11 +21,11 @@ type SimModel struct {
 	changed bool
 }
 
-// NewSimModel creates and loads sim data
-func NewSimModel(relativePath, file string) api.IModel {
-	o := new(SimModel)
+// NewSynapsePersist creates and load data
+func NewSynapsePersist(relativePath, file string) api.IModel {
+	o := new(SynapsesPersist)
 
-	o.Sim = &SimJSON{}
+	o.Synapses = SynapsesJSON{}
 
 	o.relativePath = relativePath
 	o.file = file
@@ -36,56 +36,54 @@ func NewSimModel(relativePath, file string) api.IModel {
 }
 
 // Data returns the json loaded app data
-func (m *SimModel) Data() interface{} {
-	return m.Sim
+func (m *SynapsesPersist) Data() interface{} {
+	return &m.Synapses
 }
 
-// SetActiveSynapse ...
-func (m *SimModel) SetActiveSynapse(id int) {
-	m.Sim.ActiveSynapse = id
-	m.changed = true
+// SetActiveSynapse not used
+func (m *SynapsesPersist) SetActiveSynapse(id int) {
 }
 
 // Changed marks model dirty
-func (m *SimModel) Changed() {
+func (m *SynapsesPersist) Changed() {
 	m.changed = true
 }
 
 // Clean marks model NOT-dirty
-func (m *SimModel) Clean() {
+func (m *SynapsesPersist) Clean() {
 	m.changed = false
 }
 
 // Load model from disk
-func (m *SimModel) Load() {
+func (m *SynapsesPersist) Load() {
 	dataPath, err := filepath.Abs(m.relativePath)
 	if err != nil {
 		panic(err)
 	}
 
-	eConfFile, err := os.Open(dataPath + m.file)
+	eFile, err := os.Open(dataPath + m.file)
 	if err != nil {
 		panic(err)
 	}
 
-	defer eConfFile.Close()
+	defer eFile.Close()
 
-	bytes, err := ioutil.ReadAll(eConfFile)
+	bytes, err := ioutil.ReadAll(eFile)
 	if err != nil {
 		panic(err)
 	}
 
-	err = json.Unmarshal(bytes, m.Sim)
+	err = json.Unmarshal(bytes, &m.Synapses)
 	if err != nil {
 		panic(err)
 	}
 }
 
 // Save model to disk
-func (m *SimModel) Save() {
+func (m *SynapsesPersist) Save() {
 	if m.changed {
-		fmt.Println("Saving simulation properties...")
-		indentedJSON, _ := json.MarshalIndent(m.Sim, "", "  ")
+		fmt.Println("Saving synaptic data...")
+		indentedJSON, _ := json.MarshalIndent(m.Synapses, "", "  ")
 
 		dataPath, err := filepath.Abs(m.relativePath)
 		if err != nil {
@@ -98,6 +96,6 @@ func (m *SimModel) Save() {
 		}
 
 		m.Clean()
-		fmt.Println("Simulation properties saved")
+		fmt.Println("Synaptic data saved")
 	}
 }

@@ -73,21 +73,24 @@ func (si *Simulator) Build() {
 	axon := cell.NewAxonZeroDelay()
 	soma.SetAxon(axon)
 
+	genSynID := 0
 	// We need a synapse for each stream, both Noise and Stimulus
-	// Noise first:
-	for _, noise := range si.noises {
-		synapse := cell.NewSynapse(simMod, samples, soma, dendrite, compartment)
-		// route noise to synapse
-		synapse.SetStream(noise)
-		compartment.AddSynapse(synapse)
-	}
-
-	// Now stimulus:
 	for _, stimulus := range si.stimuli {
-		synapse := cell.NewSynapse(simMod, samples, soma, dendrite, compartment)
+		synapse := cell.NewSynapse(si.environment,
+			soma, dendrite, compartment, genSynID)
 		// route noise to synapse
 		synapse.SetStream(stimulus)
-		compartment.AddSynapse(synapse)
+		synapse.Initialize(false)
+		genSynID++
+	}
+
+	for _, noise := range si.noises {
+		synapse := cell.NewSynapse(si.environment,
+			soma, dendrite, compartment, genSynID)
+		// route noise to synapse
+		synapse.SetStream(noise)
+		synapse.Initialize(true)
+		genSynID++
 	}
 
 	// Now create the single Neuron that this simulation execises

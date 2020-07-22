@@ -39,9 +39,6 @@ func NewCompartment(simModel api.IModel, dendrite api.IDendrite, soma api.ISoma)
 
 // Initialize compartment
 func (c *Compartment) Initialize() {
-	for _, synapses := range c.synapses {
-		synapses.Initialize()
-	}
 }
 
 // AddSynapse adds synapse to compartment

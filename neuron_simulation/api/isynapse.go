@@ -2,7 +2,7 @@ package api
 
 // ISynapse is part of a compartment and dendrite
 type ISynapse interface {
-	Initialize()
+	Initialize(bool)
 	Reset()
 
 	SetStream(IBitStream)
@@ -15,6 +15,8 @@ type ISynapse interface {
 
 	// Data sample fields
 	ID() int
+	SetID(int)
+
 	Weight() float64
 	Surge() float64
 	Psp() float64

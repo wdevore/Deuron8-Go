@@ -20,10 +20,11 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Synapse") {
 		sim := environment.Sim()
 		config := environment.Config()
+		synMod := environment.Synapses().Data().(*model.SynapsesJSON)
 
 		simData, _ := sim.Data().(*model.SimJSON)
 		activeSyn = simData.ActiveSynapse
-		synapses := simData.Neuron.Dendrites.Compartments[0].Synapses
+		synapses := synMod.Synapses
 		activeSynapse := synapses[activeSyn]
 
 		imgui.PushItemWidth(80)
