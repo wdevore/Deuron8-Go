@@ -128,6 +128,25 @@ func (s *Synapse) Initialize(useDefaults bool) {
 	// distance from the soma.
 	if useDefaults {
 		defs := s.simJ.Neuron.Dendrites.Compartments[0].SynapseDefaults
+
+		// Copy defaults to a new model-synapse
+		synJ := &model.SynapseJSON{
+			TaoP:             defs.TaoP,
+			TaoN:             defs.TaoN,
+			Mu:               defs.Mu,
+			Distance:         defs.Distance,
+			ID:               s.id,
+			Lambda:           defs.Lambda,
+			Amb:              defs.Amb,
+			W:                defs.W,
+			Alpha:            defs.Alpha,
+			LearningRateSlow: defs.LearningRateSlow,
+			LearningRateFast: defs.LearningRateFast,
+			TaoI:             defs.TaoI,
+			Ama:              defs.Ama,
+		}
+		s.synJ.Synapses = append(s.synJ.Synapses, synJ)
+
 		s.distanceEfficacy = s.dendrite.APEfficacy(defs.Distance)
 	} else {
 		syn := s.synJ.Synapses[s.id]

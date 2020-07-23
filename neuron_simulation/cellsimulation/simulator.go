@@ -68,7 +68,6 @@ func (si *Simulator) Build() {
 	dendrite := cell.NewDendrite(simMod, soma)
 	soma.SetDendrite(dendrite)
 	compartment := cell.NewCompartment(simMod, dendrite, soma)
-	dendrite.AddCompartment(compartment)
 
 	axon := cell.NewAxonZeroDelay()
 	soma.SetAxon(axon)

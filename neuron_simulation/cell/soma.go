@@ -151,7 +151,8 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 			// Generate a back propagating spike that fades spatial/temporally similar to CaDP model.
 			// This spike affects forward in time.
 			// The value is driven by the time delta of (preAPt - APt)
-			s.axon.Set(1)
+			s.axon.Set(1) // We set immediately because we are simulating a single neuron.
+			// s.axon.Input(1)
 
 			// Surge from action potential
 
