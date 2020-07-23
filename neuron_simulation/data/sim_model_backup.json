@@ -4,7 +4,6 @@
   "PoissonPatternSpread": 50,
   "PercentOfExcititorySynapses": 80,
   "Hertz": 5,
-  "FiringRate": 0.005,
   "PoissonPatternMax": 300,
   "PoissonPatternMin": 50,
   "StimulusScaler": 9,

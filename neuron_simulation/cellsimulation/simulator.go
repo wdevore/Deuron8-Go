@@ -45,7 +45,7 @@ func (si *Simulator) Build() {
 	// we can exercise them on each simulation step.
 	seed := uint64(5000)
 	for i := 0; i < siData.NoiseCount; i++ {
-		noise := streams.NewPoissonStream(seed, 4.0)
+		noise := streams.NewPoissonStream(seed, siData.NoiseLambda)
 		si.noises = append(si.noises, noise)
 		seed += 5000
 	}
@@ -139,7 +139,7 @@ func (si *Simulator) Run(ch chan string) {
 				if complete {
 					si.reset()
 					si.running = false
-					fmt.Println("Simulation stopped")
+					fmt.Println("Simulation finished")
 				}
 				si.t++
 			} else if si.step {
@@ -157,7 +157,9 @@ func (si *Simulator) Run(ch chan string) {
 			fmt.Println("Simulator is ready.")
 		}
 
-		<-time.After(time.Millisecond * 33)
+		if !si.running {
+			<-time.After(time.Millisecond * 33)
+		}
 	}
 
 	fmt.Println("Simulation coroutine exited")

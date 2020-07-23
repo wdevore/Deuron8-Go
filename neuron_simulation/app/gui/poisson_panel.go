@@ -18,7 +18,7 @@ func BuildPoissonPanel(environment api.IEnvironment) {
 
 		imgui.PushItemWidth(80)
 
-		textBuffer = fmt.Sprintf("%3.3f", simData.FiringRate)
+		textBuffer = fmt.Sprintf("%3.3f", simData.NoiseLambda)
 		entered := imgui.InputTextV(
 			"Firing Rate", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -32,7 +32,7 @@ func BuildPoissonPanel(environment api.IEnvironment) {
 			if err == nil {
 				fmt.Println("Firing Rate: ", fv)
 				sim.Changed()
-				simData.FiringRate = fv
+				simData.NoiseLambda = fv
 			}
 		}
 

@@ -1,6 +1,6 @@
 {
   "AutoSave": true,
-  "StepEnabled": true,
+  "StepEnabled": false,
   "WindowWidth": 2000,
   "WindowHeight": 1000,
   "Simulation": "sim_1.json",

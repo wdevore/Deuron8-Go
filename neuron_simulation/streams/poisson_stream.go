@@ -1,8 +1,6 @@
 package streams
 
 import (
-	"math"
-
 	"golang.org/x/exp/rand"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -56,6 +54,8 @@ type poissonStream struct {
 	averagePerInterval float64
 
 	seed uint64
+
+	output int
 }
 
 // NewPoissonStream creates a new poisson distributed stream of spikes
@@ -78,24 +78,35 @@ func (p *poissonStream) Reset() {
 
 // Step ...
 func (p *poissonStream) Step() {
+	if p.isi == 0 {
+		// Time to generate a spike
+		p.isi = p.next()
+		p.output = 1
+	} else {
+		p.isi--
+		p.output = 0
+	}
 }
 
 // Output ...
 func (p *poissonStream) Output() int {
-	if p.isi == 0 {
-		// Time to generate a spike
-		p.isi = p.next()
-		return 1
-	}
-
-	p.isi--
-	return 0
+	return p.output
 }
 
 // Create an event per interval of time, for example, spikes in a 1 sec span.
 // A firing rate given in rate/ms, for example, 0.2 in 1ms (0.2/1)
 // or 200 in 1sec (200/1000ms)
 func (p *poissonStream) next() int64 {
-	isiF := -math.Log(1.0-p.poisson.Rand()) / p.averagePerInterval
-	return int64(math.Round(isiF))
+	// c := [100]int{}
+	// for i := 0; i < 1000; i++ {
+	// 	r := p.poisson.Rand()
+	// 	c[int(r)]++
+	// }
+	// fmt.Println(c)
+
+	r := p.poisson.Rand()
+	return int64(r)
+
+	// isiF := -math.Log(1.0-r) / p.averagePerInterval
+	// return int64(math.Round(isiF))
 }
