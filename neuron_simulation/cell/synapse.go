@@ -1,7 +1,6 @@
 package cell
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -209,7 +208,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	// The output of the stream is the input to this synapse.
 	if s.stream.Output() == 1 {
 		// A spike has arrived on the input to this synapse.
-		fmt.Printf("(%d) at %d\n", s.id, t)
+		// fmt.Printf("(%d) at %d\n", s.id, t)
 
 		if s.excititory {
 			s.surge = s.psp + syn.Ama*math.Exp(-s.psp/syn.TaoP)
@@ -261,7 +260,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	}
 
 	// Collect this synapse' values at this time step
-	s.samples.CollectSynapse(s, t)
+	s.samples.CollectSynapse(s, s.id, t)
 
 	return value, s.w
 }

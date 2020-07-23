@@ -108,17 +108,52 @@ func (g *spikeGraph) drawHeader(environment api.IEnvironment) {
 
 		changed := imgui.SliderFloatV("Scroll Velocity", &scrollVelocity, -5.0, 5.0, "%.2f", 1.0)
 		if changed {
-			config.Changed()
 			moData.Scroll = float64(scrollVelocity)
 		}
 
-		imgui.SameLineV(450, 30)
+		velocity := ScrollVelocity(moData.Scroll)
+		rangeDx := rangeEnd - rangeStart
 
-		imgui.PushItemWidth(300)
+		if moData.Scroll < 0 {
+			rangeStart += int32(velocity)
+			// Left
+			if rangeStart > 0 {
+				rangeEnd = rangeStart + rangeDx
+			} else {
+				rangeStart = 1
+				rangeEnd = rangeStart + rangeDx
+			}
+			config.Changed()
+			moData.RangeStart = int(rangeStart)
+			moData.RangeEnd = int(rangeEnd)
+		} else if moData.Scroll > 0 {
+			rangeEnd += int32(velocity)
+			if rangeEnd < duration {
+				rangeStart = rangeEnd - rangeDx
+			} else {
+				rangeEnd = duration
+				rangeStart = rangeEnd - rangeDx
+			}
+			config.Changed()
+			moData.RangeStart = int(rangeStart)
+			moData.RangeEnd = int(rangeEnd)
+		}
+
+		// If above slider is released we clear the velocity.
+		if !imgui.IsItemActive() {
+			moData.Scroll = 0.0
+		}
+
+		imgui.SameLineV(250, 100)
+
+		imgui.PushItemWidth(400)
 		imgui.Checkbox("Show Noise", &g.showPoissonData)
 		imgui.PopItemWidth()
-		imgui.SameLineV(350, 30)
+
+		imgui.SameLineV(350, 100)
 		imgui.Checkbox("Show Stimulus", &g.showStimData)
+
+		imgui.SameLineV(500, 100)
 
 		barRange := moData.RangeEnd - moData.RangeStart
 		if barRange < maxVerticalBarsLimit {
@@ -175,6 +210,12 @@ func (g *spikeGraph) drawGraph(environment api.IEnvironment) {
 	g.drawData(environment)
 }
 
+// -----------------------------------------------------------------------
+// Only a window of data is shown based on the RangeStart and End
+// The range needs to be mapped to the graph window via lerping.
+// Scrolling adjusts the Range by moving both the Start and End.
+// -----------------------------------------------------------------------
+
 func (g *spikeGraph) drawData(environment api.IEnvironment) {
 	samples := environment.Samples()
 	// drawList := imgui.WindowDrawList()
@@ -188,8 +229,19 @@ func (g *spikeGraph) drawData(environment api.IEnvironment) {
 	}
 
 	// io := imgui.CurrentIO()
-
 }
 
 func (g *spikeGraph) drawNoise(environment api.IEnvironment) {
+	samples := environment.Samples()
+	// drawList := imgui.WindowDrawList()
+	// canvasPos := imgui.CursorScreenPos()
+
+	// We can't render anything until sample data is present
+	soma := samples.SomaData()
+
+	if len(soma) == 0 {
+		return
+	}
+
+	// io := imgui.CurrentIO()
 }

@@ -137,6 +137,12 @@ func (si *Simulator) Run(ch chan string) {
 				// for the specified duration (in milliseconds).
 				complete := si.simulate(si.t, duration)
 				if complete {
+					// synData := si.environment.Samples().SynapseData(10)
+					// for _, syn := range synData {
+					// 	if syn.Input() == 1 {
+					// 		fmt.Printf("(%d) inp: %d\n", syn.Input(), syn.T())
+					// 	}
+					// }
 					si.reset()
 					si.running = false
 					fmt.Println("Simulation finished")

@@ -153,6 +153,7 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 			// The value is driven by the time delta of (preAPt - APt)
 			s.axon.Set(1) // We set immediately because we are simulating a single neuron.
 			// s.axon.Input(1)
+			// fmt.Println(t)
 
 			// Surge from action potential
 

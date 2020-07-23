@@ -16,7 +16,4 @@ type IEnvironment interface {
 	IsCmdIssued() bool
 	CmdIssued()
 	Cmd() string
-
-	AutoStop(bool)
-	IsAutoStop() bool
 }

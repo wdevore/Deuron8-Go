@@ -1,6 +1,10 @@
 package graphs
 
-import "github.com/inkyblackness/imgui-go/v2"
+import (
+	"math"
+
+	"github.com/inkyblackness/imgui-go/v2"
+)
 
 // const (
 // 	GraphWindowWidth  = window - 10
@@ -43,4 +47,13 @@ func MapWindowToLocal(x, y float64, offsets imgui.Vec2) (gx, gy float64) {
 	gx = float64(offsets.X) + x
 	gy = float64(offsets.Y) + y
 	return gx, gy
+}
+
+// ScrollVelocity adjusts scrolling speed
+func ScrollVelocity(scroll float64) float64 {
+	sign := 1.0
+	if scroll < 0.0 {
+		sign = -1.0
+	}
+	return sign * math.Exp(sign*scroll)
 }

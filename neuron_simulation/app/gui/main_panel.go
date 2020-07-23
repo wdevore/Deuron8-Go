@@ -29,6 +29,7 @@ func BuildMainPanel(environment api.IEnvironment) {
 	imgui.SameLine()
 	if imgui.Button("Reset Simulator") {
 		environment.IssueCmd("reset")
+		environment.Samples().Reset()
 	}
 
 	imgui.SameLine()
