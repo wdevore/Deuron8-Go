@@ -26,6 +26,8 @@ type environmentS struct {
 
 	simChan chan string
 	cmd     string
+
+	simRunning bool
 }
 
 // NewEnvironment ...
@@ -175,4 +177,12 @@ func (e *environmentS) CmdIssued() {
 }
 func (e *environmentS) Cmd() string {
 	return e.cmd
+}
+
+func (e *environmentS) Run(state bool) {
+	e.simRunning = state
+}
+
+func (e *environmentS) IsRunning() bool {
+	return e.simRunning
 }

@@ -16,4 +16,9 @@ type IEnvironment interface {
 	IsCmdIssued() bool
 	CmdIssued()
 	Cmd() string
+
+	// Because the simulator runs in a coroutine the GUI
+	// can't attempt to access any samples until the simulation is complete.
+	IsRunning() bool
+	Run(bool)
 }

@@ -12,9 +12,12 @@ type ISamples interface {
 	SynapticData() [][]ISynapseSample
 	SynapseData(int) []ISynapseSample
 	SomaData() []ISomaSample
+
+	SynapseSurgeMin() float64
+	SynapseSurgeMax() float64
 }
 
-// ISynapseSample ...
+// ISynapseSample one for each synapse
 type ISynapseSample interface {
 	T() int
 	ID() int
@@ -24,7 +27,7 @@ type ISynapseSample interface {
 	Input() int
 }
 
-// ISomaSample ...
+// ISomaSample for a single soma
 type ISomaSample interface {
 	T() int
 	ApFast() float64

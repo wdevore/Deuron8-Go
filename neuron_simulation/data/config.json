@@ -16,7 +16,7 @@
   "StimExpander": 1,
   "Duration": 500,
   "OutputDendriteAvgFiles": "dendrite_avg_samples_span_",
-  "RangeStart": 0,
+  "RangeStart": 11,
   "OutputSynapseWeightFiles": "synapse_weight_samples_span_",
   "OutputSomaSpikeFiles": "soma_spike_samples_span_",
   "PatternFrequency": 0,

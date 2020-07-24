@@ -124,6 +124,8 @@ func NewSynapse(environment api.IEnvironment,
 
 // Initialize pre configures synapse
 func (s *Synapse) Initialize(useDefaults bool) {
+	s.Reset()
+
 	// Calc this synapses's reaction to the AP based on its
 	// distance from the soma.
 	if useDefaults {
@@ -235,6 +237,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	} else {
 		s.psp = s.surge * math.Exp(-dt/syn.TaoN)
 	}
+	// fmt.Printf("|(%d) psp:%0.3f|", t, s.psp)
 
 	// If an AP occurred (from the soma) we read the current psp value and add it to the "w"
 	if s.soma.Output() == 1 {

@@ -19,24 +19,24 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	config := environment.Config()
 
 	// if imgui.CollapsingHeader("GlobalHdr") {
-	imgui.PushItemWidth(50)
-	entered := imgui.InputTextV(
-		"Active Sim", &textBuffer,
-		imgui.InputTextFlagsEnterReturnsTrue|
-			imgui.InputTextFlagsCharsDecimal|
-			imgui.InputTextFlagsCharsNoBlank,
-		nil)
+	// imgui.PushItemWidth(50)
+	// entered := imgui.InputTextV(
+	// 	"Active Sim", &textBuffer,
+	// 	imgui.InputTextFlagsEnterReturnsTrue|
+	// 		imgui.InputTextFlagsCharsDecimal|
+	// 		imgui.InputTextFlagsCharsNoBlank,
+	// 	nil)
 
-	if entered {
-		fmt.Println("Activated Sim: ", textBuffer)
-	}
-	imgui.PopItemWidth()
+	// if entered {
+	// 	fmt.Println("Activated Sim: ", textBuffer)
+	// }
+	// imgui.PopItemWidth()
 
 	moData, _ := config.Data().(*model.ConfigJSON)
 
 	imgui.PushItemWidth(100)
 	duration = int32(moData.Duration)
-	entered = imgui.InputIntV("Duration", &duration, 1, 100, imgui.InputTextFlagsEnterReturnsTrue)
+	entered := imgui.InputIntV("Duration", &duration, 1, 100, imgui.InputTextFlagsEnterReturnsTrue)
 	if entered {
 		config.Changed()
 		fmt.Println("Duration: ", duration)

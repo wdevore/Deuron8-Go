@@ -30,11 +30,10 @@ import (
 
 const (
 	maxVerticalBarsLimit = 250
-	spikeRowOffset       = 2
+	spikeRowOffset       = 1
 	spikeHeight          = 10
 	cellSpikeHeight      = 30
 	cellLineThickness    = 2.0
-	panelHeight          = 300
 )
 
 type spikeGraph struct {
@@ -88,7 +87,7 @@ func (g *spikeGraph) Draw(environment api.IEnvironment, vertPos int) {
 	config := environment.Config()
 
 	moData, _ := config.Data().(*model.ConfigJSON)
-	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(panelHeight + 20)}, imgui.ConditionAlways)
+	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(SpikePanelHeight + 20)}, imgui.ConditionAlways)
 
 	imgui.Begin("Spike Graph")
 
@@ -96,7 +95,9 @@ func (g *spikeGraph) Draw(environment api.IEnvironment, vertPos int) {
 
 	imgui.Separator()
 
-	g.drawGraph(environment)
+	if !environment.IsRunning() {
+		g.drawGraph(environment)
+	}
 
 	imgui.End()
 }

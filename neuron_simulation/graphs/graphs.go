@@ -6,10 +6,10 @@ import (
 	"github.com/inkyblackness/imgui-go/v2"
 )
 
-// const (
-// 	GraphWindowWidth  = window - 10
-// 	GraphWindowHeight = 200
-// )
+const (
+	SpikePanelHeight = 300
+	SurgePanelHeight = 200
+)
 
 // Lerp returns a the value between min and max given t = 0->1
 func Lerp(min, max, t float64) float64 {

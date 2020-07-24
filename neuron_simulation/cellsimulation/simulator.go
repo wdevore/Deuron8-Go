@@ -119,6 +119,7 @@ func (si *Simulator) Run(ch chan string) {
 				fmt.Println("Running simulation...")
 				si.reset()
 				si.running = true
+				si.environment.Run(si.running)
 				si.step = false
 			case "step":
 				fmt.Println("Stepping simulation at t=", si.t)
@@ -145,6 +146,7 @@ func (si *Simulator) Run(ch chan string) {
 					// }
 					si.reset()
 					si.running = false
+					si.environment.Run(si.running)
 					fmt.Println("Simulation finished")
 				}
 				si.t++

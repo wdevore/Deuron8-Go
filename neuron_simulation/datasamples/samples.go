@@ -1,6 +1,10 @@
 package datasamples
 
-import "github.com/wdevore/Deuron8-Go/neuron_simulation/api"
+import (
+	"math"
+
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
+)
 
 const (
 	maxSynapses = 30
@@ -67,6 +71,8 @@ type samples struct {
 	synData [][]api.ISynapseSample
 
 	somaData []api.ISomaSample
+
+	synapseSurgeMin, synapseSurgeMax float64
 }
 
 // NewSamples returns a samples collection
@@ -81,14 +87,23 @@ func NewSamples() api.ISamples {
 func (s *samples) Reset() {
 	s.synData = make([][]api.ISynapseSample, maxSynapses)
 	s.somaData = []api.ISomaSample{}
+
+	s.synapseSurgeMin = 1000000000000.0
+	s.synapseSurgeMax = -1000000000000.0
 }
 
 func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 	// Check if a channel is already in play. Create a new channel if not.
 	if s.synData[id] == nil {
+		// fmt.Println("create channel:", id)
 		s.synData[id] = []api.ISynapseSample{}
 	}
 
+	// fmt.Printf("|(%d) surge:%0.3f|", t, synapse.Surge())
+
+	s.synapseSurgeMin = math.Min(s.synapseSurgeMin, synapse.Surge())
+	s.synapseSurgeMax = math.Max(s.synapseSurgeMax, synapse.Surge())
+	// fmt.Println(s.synapseSurgeMin, ", ", s.synapseSurgeMax)
 	s.synData[id] = append(s.synData[id],
 		&SynapseSamples{
 			t:      t,
@@ -132,4 +147,12 @@ func (s *samples) SomaData() []api.ISomaSample {
 
 func (s *samples) CollectDendrite(dendrite api.IDendrite, t int) {
 
+}
+
+func (s *samples) SynapseSurgeMin() float64 {
+	return s.synapseSurgeMin
+}
+
+func (s *samples) SynapseSurgeMax() float64 {
+	return s.synapseSurgeMax
 }

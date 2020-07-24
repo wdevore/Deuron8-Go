@@ -63,6 +63,7 @@ func run(p Platform, r Renderer, environment api.IEnvironment) {
 	clearColor := [3]float32{0.25, 0.25, 0.25}
 
 	spikeGraph := graphs.NewSpikeGraph()
+	surgeGraph := graphs.NewSynapseSurgeGraph()
 
 	ch := make(chan string)
 
@@ -83,8 +84,15 @@ func run(p Platform, r Renderer, environment api.IEnvironment) {
 
 		imgui.NewFrame()
 
+		// ---------------------------------------------------------
+		// Draw Graphs
+		// ---------------------------------------------------------
 		vertPos := 40
 		spikeGraph.Draw(environment, vertPos)
+
+		vertPos += graphs.SpikePanelHeight + 20
+		surgeGraph.Draw(environment, vertPos)
+		// ---------------------------------------------------------
 
 		gui.BuildGui(environment)
 
