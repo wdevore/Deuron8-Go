@@ -73,6 +73,7 @@ type samples struct {
 	somaData []api.ISomaSample
 
 	synapseSurgeMin, synapseSurgeMax float64
+	synapsePspMin, synapsePspMax     float64
 }
 
 // NewSamples returns a samples collection
@@ -104,6 +105,9 @@ func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 	s.synapseSurgeMin = math.Min(s.synapseSurgeMin, synapse.Surge())
 	s.synapseSurgeMax = math.Max(s.synapseSurgeMax, synapse.Surge())
 	// fmt.Println(s.synapseSurgeMin, ", ", s.synapseSurgeMax)
+	s.synapsePspMin = math.Min(s.synapsePspMin, synapse.Psp())
+	s.synapsePspMax = math.Max(s.synapsePspMax, synapse.Psp())
+
 	s.synData[id] = append(s.synData[id],
 		&SynapseSamples{
 			t:      t,
@@ -154,5 +158,13 @@ func (s *samples) SynapseSurgeMin() float64 {
 }
 
 func (s *samples) SynapseSurgeMax() float64 {
+	return s.synapseSurgeMax
+}
+
+func (s *samples) SynapsePspMin() float64 {
+	return s.synapseSurgeMin
+}
+
+func (s *samples) SynapsePspMax() float64 {
 	return s.synapseSurgeMax
 }

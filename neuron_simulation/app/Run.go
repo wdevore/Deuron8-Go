@@ -64,6 +64,7 @@ func run(p Platform, r Renderer, environment api.IEnvironment) {
 
 	spikeGraph := graphs.NewSpikeGraph()
 	surgeGraph := graphs.NewSynapseSurgeGraph()
+	pspGraph := graphs.NewSynapsePspGraph()
 
 	ch := make(chan string)
 
@@ -92,6 +93,9 @@ func run(p Platform, r Renderer, environment api.IEnvironment) {
 
 		vertPos += graphs.SpikePanelHeight + 20
 		surgeGraph.Draw(environment, vertPos)
+
+		vertPos += graphs.SurgePanelHeight
+		pspGraph.Draw(environment, vertPos)
 		// ---------------------------------------------------------
 
 		gui.BuildGui(environment)

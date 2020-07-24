@@ -9,6 +9,7 @@ import (
 const (
 	SpikePanelHeight = 300
 	SurgePanelHeight = 200
+	PspPanelHeight   = 200
 )
 
 // Lerp returns a the value between min and max given t = 0->1

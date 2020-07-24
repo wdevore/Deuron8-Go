@@ -15,6 +15,9 @@ type ISamples interface {
 
 	SynapseSurgeMin() float64
 	SynapseSurgeMax() float64
+
+	SynapsePspMin() float64
+	SynapsePspMax() float64
 }
 
 // ISynapseSample one for each synapse
