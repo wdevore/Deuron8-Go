@@ -2,6 +2,10 @@ package datasamples
 
 import "github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 
+const (
+	maxSynapses = 30
+)
+
 // Each synapse has one stream feeding into it.
 // Some could be Noise while others are Stimulus
 
@@ -60,7 +64,7 @@ func (y *SomaSamples) Psp() float64 { return y.psp }
 type samples struct {
 	// Synaptic data. There are N synapses and each is tracked
 	// with their own collection.
-	synData map[int][]api.ISynapseSample
+	synData [][]api.ISynapseSample
 
 	somaData []api.ISomaSample
 }
@@ -75,18 +79,17 @@ func NewSamples() api.ISamples {
 }
 
 func (s *samples) Reset() {
-	s.synData = map[int][]api.ISynapseSample{}
+	s.synData = make([][]api.ISynapseSample, maxSynapses)
 	s.somaData = []api.ISomaSample{}
 }
 
 func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 	// Check if a channel is already in play. Create a new channel if not.
-	synData := s.synData[id]
-	if synData == nil {
-		synData = []api.ISynapseSample{}
+	if s.synData[id] == nil {
+		s.synData[id] = []api.ISynapseSample{}
 	}
 
-	s.synData[id] = append(synData,
+	s.synData[id] = append(s.synData[id],
 		&SynapseSamples{
 			t:      t,
 			id:     synapse.ID(),
@@ -111,7 +114,11 @@ func (s *samples) CollectSoma(soma api.ISoma, t int) {
 	)
 }
 
-func (s *samples) SynapticData() map[int][]api.ISynapseSample {
+// func (s *samples) SynapticData() map[int][]api.ISynapseSample {
+// 	return nil //s.synData
+// }
+
+func (s *samples) SynapticData() [][]api.ISynapseSample {
 	return s.synData
 }
 

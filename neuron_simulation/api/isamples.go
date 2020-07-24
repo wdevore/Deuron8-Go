@@ -8,7 +8,8 @@ type ISamples interface {
 
 	Reset()
 
-	SynapticData() map[int][]ISynapseSample
+	// SynapticData() map[int][]ISynapseSample
+	SynapticData() [][]ISynapseSample
 	SynapseData(int) []ISynapseSample
 	SomaData() []ISomaSample
 }

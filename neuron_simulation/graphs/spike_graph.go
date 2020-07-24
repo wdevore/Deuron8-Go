@@ -34,6 +34,7 @@ const (
 	spikeHeight          = 10
 	cellSpikeHeight      = 30
 	cellLineThickness    = 2.0
+	panelHeight          = 300
 )
 
 type spikeGraph struct {
@@ -43,10 +44,19 @@ type spikeGraph struct {
 	showPoissonData bool
 	showStimData    bool
 
+	spikeColor                imgui.PackedColor
+	stimulusColor             imgui.PackedColor
+	noiseColor                imgui.PackedColor
+	verticalMarkerLightColor  imgui.PackedColor
+	verticalCursorMarkerColor imgui.PackedColor
+
 	toolTipBackgroundColor imgui.PackedColor
 	toolTipForgroundColor  imgui.PackedColor
 	toolTipMinCorner       imgui.Vec2
 	toolTipMaxCorner       imgui.Vec2
+
+	p1 imgui.Vec2
+	p2 imgui.Vec2
 }
 
 // NewSpikeGraph creates imgui graph
@@ -54,11 +64,22 @@ func NewSpikeGraph() api.IGraph {
 	o := new(spikeGraph)
 	o.showPoissonData = true
 	o.showStimData = true
-	// o.toolTipBackgroundColor = imgui.Packed(color.RGBA{R: 64, G: 64, B: 64, A: 255})
+
 	o.toolTipBackgroundColor = imgui.Packed(color.Gray{Y: 32})
 	o.toolTipForgroundColor = imgui.Packed(color.Gray{Y: 128})
+	o.verticalMarkerLightColor = imgui.Packed(color.Gray{Y: 64})
+	o.verticalCursorMarkerColor = imgui.Packed(color.Gray{Y: 128})
+
+	o.stimulusColor = imgui.Packed(color.RGBA{R: 166, G: 255, B: 77, A: 255})
+	o.noiseColor = imgui.Packed(color.RGBA{R: 255, G: 255, B: 0, A: 255})
+	o.spikeColor = imgui.Packed(color.White)
+
 	o.toolTipMinCorner = imgui.Vec2{}
 	o.toolTipMaxCorner = imgui.Vec2{}
+
+	o.p1 = imgui.Vec2{}
+	o.p2 = imgui.Vec2{}
+
 	return o
 }
 
@@ -67,7 +88,7 @@ func (g *spikeGraph) Draw(environment api.IEnvironment, vertPos int) {
 	config := environment.Config()
 
 	moData, _ := config.Data().(*model.ConfigJSON)
-	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(200 + 20)}, imgui.ConditionAlways)
+	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(panelHeight + 20)}, imgui.ConditionAlways)
 
 	imgui.Begin("Spike Graph")
 
@@ -90,7 +111,7 @@ func (g *spikeGraph) drawHeader(environment api.IEnvironment) {
 		rangeEnd := int32(moData.RangeEnd)
 		duration := int32(moData.Duration)
 
-		changedS := imgui.DragIntV("RangeStart##1", &rangeStart, 1.0, 1, int32(moData.RangeEnd), "%d")
+		changedS := imgui.DragIntV("RangeStart##1", &rangeStart, 1.0, 0, int32(moData.RangeEnd), "%d")
 
 		imgui.SameLine()
 
@@ -120,7 +141,7 @@ func (g *spikeGraph) drawHeader(environment api.IEnvironment) {
 			if rangeStart > 0 {
 				rangeEnd = rangeStart + rangeDx
 			} else {
-				rangeStart = 1
+				rangeStart = 0
 				rangeEnd = rangeStart + rangeDx
 			}
 			config.Changed()
@@ -153,10 +174,10 @@ func (g *spikeGraph) drawHeader(environment api.IEnvironment) {
 		imgui.SameLineV(350, 100)
 		imgui.Checkbox("Show Stimulus", &g.showStimData)
 
-		imgui.SameLineV(500, 100)
-
 		barRange := moData.RangeEnd - moData.RangeStart
 		if barRange < maxVerticalBarsLimit {
+			imgui.SameLineV(500, 100)
+
 			// Limit bars to less than Max because Drawlist is limited to 2^16 items.
 			imgui.Checkbox("Show Markers", &g.showMarkers)
 		} else {
@@ -193,21 +214,38 @@ func (g *spikeGraph) drawGraph(environment api.IEnvironment) {
 	g.toolTipMaxCorner.X = canvasPos.X + canvasSize.X
 	g.toolTipMaxCorner.Y = canvasPos.Y + canvasSize.Y
 
-	// A visible button scaled to the size of the canvas is used for hover checking
-	imgui.InvisibleButtonV("canvas", canvasSize)
-
 	drawList.AddRectFilled(g.toolTipMinCorner, g.toolTipMaxCorner, g.toolTipBackgroundColor)
-	if imgui.IsItemHovered() {
-		imgui.BeginTooltip()
-		imgui.Text(fmt.Sprintf("%d", g.timePos))
-		imgui.EndTooltip()
+
+	if g.showMarkers {
+		if imgui.IsWindowHovered() {
+			imgui.BeginTooltip()
+			imgui.Text(fmt.Sprintf("%d", g.timePos))
+			imgui.EndTooltip()
+		}
+
+		// Below doesn't work in Inky's binding don't include clipping
+		// A visible button scaled to the size of the canvas is used for hover checking
+		// imgui.InvisibleButtonV("canvas", canvasSize)
+		// if imgui.IsItemHovered() {
+		// 	imgui.BeginTooltip()
+		// 	imgui.Text(fmt.Sprintf("%d", g.timePos))
+		// 	imgui.EndTooltip()
+		// }
+
+		drawList.AddRect(g.toolTipMinCorner, g.toolTipMaxCorner, g.toolTipForgroundColor)
+
+		g.drawVerticalMarkers(environment.Config(), drawList)
 	}
 
-	drawList.AddRect(g.toolTipMinCorner, g.toolTipMaxCorner, g.toolTipForgroundColor)
+	if g.showPoissonData {
+		g.drawNoise(environment, drawList)
+	}
 
-	g.drawNoise(environment)
+	if g.showStimData {
+		g.drawData(environment, drawList)
+	}
 
-	g.drawData(environment)
+	g.drawSomaData(environment, drawList)
 }
 
 // -----------------------------------------------------------------------
@@ -216,32 +254,160 @@ func (g *spikeGraph) drawGraph(environment api.IEnvironment) {
 // Scrolling adjusts the Range by moving both the Start and End.
 // -----------------------------------------------------------------------
 
-func (g *spikeGraph) drawData(environment api.IEnvironment) {
-	samples := environment.Samples()
-	// drawList := imgui.WindowDrawList()
-	// canvasPos := imgui.CursorScreenPos()
+func (g *spikeGraph) drawVerticalMarkers(config api.IModel, drawList imgui.DrawList) {
+	mousePosX := imgui.MousePos().X
 
-	// We can't render anything until sample data is present
-	soma := samples.SomaData()
+	// Mapped data coords
+	uX := 0.0
+	wX := 0.0
+	plvx := 0.0
 
-	if len(soma) == 0 {
-		return
+	moData, _ := config.Data().(*model.ConfigJSON)
+	rangeStart := int32(moData.RangeStart)
+	rangeEnd := int32(moData.RangeEnd)
+
+	// timePos tracks the actual time regardless of scrolling so it always
+	// starts at the current range start value.
+	timePos := int(rangeStart)
+	rangeDx := rangeEnd - rangeStart
+	canvasSize := imgui.ContentRegionAvail()
+	canvasPos := imgui.CursorScreenPos()
+
+	// "t" is a counter over the range "size". timePos is the actual
+	// time value capture for the tooltip
+	for t := int32(0); t < rangeDx; t++ {
+		// We want the markers to track with time as well, so we map "t".
+		uX = MapSampleToUnit(float64(t), 0.0, float64(rangeDx))
+		wX = MapUnitToWindow(uX, 0.0, float64(canvasSize.X))
+
+		lX, lY := MapWindowToLocal(wX, 0.0, canvasPos)
+
+		if float64(mousePosX) > plvx && float64(mousePosX) < lX {
+			// Draw cursor bar instead of time marker
+			g.p1.X = float32(lX)
+			g.p1.Y = float32(lY)
+			g.p2.X = float32(lX)
+			g.p2.Y = float32(lY) + canvasSize.Y
+			drawList.AddLine(g.p1, g.p2, g.verticalCursorMarkerColor)
+			g.timePos = timePos // + 1
+		} else {
+			// Draw time marker
+			g.p1.X = float32(lX)
+			g.p1.Y = float32(lY)
+			g.p2.X = float32(lX)
+			g.p2.Y = float32(lY) + canvasSize.Y
+			drawList.AddLine(g.p1, g.p2, g.verticalMarkerLightColor)
+		}
+
+		plvx = lX // Capture previous value for interval testing
+		timePos++
 	}
-
-	// io := imgui.CurrentIO()
 }
 
-func (g *spikeGraph) drawNoise(environment api.IEnvironment) {
+func (g *spikeGraph) drawSomaData(environment api.IEnvironment, drawList imgui.DrawList) {
+	wY := 200.0 + 40.0 // Offset from any previous rows
+	config := environment.Config()
+	moData, _ := config.Data().(*model.ConfigJSON)
+	rangeStart := int32(moData.RangeStart)
+	rangeEnd := int32(moData.RangeEnd)
+	canvasSize := imgui.ContentRegionAvail()
+
 	samples := environment.Samples()
-	// drawList := imgui.WindowDrawList()
-	// canvasPos := imgui.CursorScreenPos()
+	canvasPos := imgui.CursorScreenPos()
 
-	// We can't render anything until sample data is present
-	soma := samples.SomaData()
+	somaData := samples.SomaData()
 
-	if len(soma) == 0 {
-		return
+	if somaData != nil && len(somaData) > 0 {
+		for t := rangeStart; t < rangeEnd; t++ {
+			// Draw channel
+			if somaData[t].Output() == 1 { // A spike = 1
+				// The sample value needs to be mapped
+				uX := MapSampleToUnit(float64(t), float64(rangeStart), float64(rangeEnd))
+				wX := MapUnitToWindow(uX, 0.0, float64(canvasSize.X))
+				lX, lY := MapWindowToLocal(wX, wY, canvasPos)
+
+				g.p1.X = float32(lX)
+				g.p1.Y = float32(lY)
+				g.p2.X = float32(lX)
+				g.p2.Y = float32(lY) + spikeHeight
+				drawList.AddLine(g.p1, g.p2, g.spikeColor)
+			}
+		}
 	}
+}
 
-	// io := imgui.CurrentIO()
+func (g *spikeGraph) drawData(environment api.IEnvironment, drawList imgui.DrawList) {
+	wY := 100.0 + 20.0 // Offset from any previous rows
+	config := environment.Config()
+	moData, _ := config.Data().(*model.ConfigJSON)
+	rangeStart := int32(moData.RangeStart)
+	rangeEnd := int32(moData.RangeEnd)
+	canvasSize := imgui.ContentRegionAvail()
+
+	samples := environment.Samples()
+	canvasPos := imgui.CursorScreenPos()
+
+	synapseData := samples.SynapticData()
+
+	for i, channel := range synapseData {
+		if channel != nil {
+			if i < 10 { // The Stimulus data is the lower channels
+				for t := rangeStart; t < rangeEnd; t++ {
+					// Draw channel
+					if channel[t].Input() == 1 { // A spike = 1
+						// The sample value needs to be mapped
+						uX := MapSampleToUnit(float64(t), float64(rangeStart), float64(rangeEnd))
+						wX := MapUnitToWindow(uX, 0.0, float64(canvasSize.X))
+						lX, lY := MapWindowToLocal(wX, wY, canvasPos)
+
+						g.p1.X = float32(lX)
+						g.p1.Y = float32(lY)
+						g.p2.X = float32(lX)
+						g.p2.Y = float32(lY) + spikeHeight
+						drawList.AddLine(g.p1, g.p2, g.stimulusColor)
+					}
+				}
+				// Update row/y value and offset by a few pixels
+				wY += spikeHeight + spikeRowOffset
+			}
+		}
+	}
+}
+
+func (g *spikeGraph) drawNoise(environment api.IEnvironment, drawList imgui.DrawList) {
+	wY := 0.0 // Offset from border. 0 is underneath it.
+	config := environment.Config()
+	moData, _ := config.Data().(*model.ConfigJSON)
+	rangeStart := int32(moData.RangeStart)
+	rangeEnd := int32(moData.RangeEnd)
+	canvasSize := imgui.ContentRegionAvail()
+
+	samples := environment.Samples()
+	canvasPos := imgui.CursorScreenPos()
+
+	synapseData := samples.SynapticData()
+
+	for i, channel := range synapseData {
+		if channel != nil {
+			if i > 9 {
+				for t := rangeStart; t < rangeEnd; t++ {
+					// Draw channel
+					if channel[t].Input() == 1 { // A spike = 1
+						// The sample value needs to be mapped
+						uX := MapSampleToUnit(float64(t), float64(rangeStart), float64(rangeEnd))
+						wX := MapUnitToWindow(uX, 0.0, float64(canvasSize.X))
+						lX, lY := MapWindowToLocal(wX, wY, canvasPos)
+
+						g.p1.X = float32(lX)
+						g.p1.Y = float32(lY)
+						g.p2.X = float32(lX)
+						g.p2.Y = float32(lY) + spikeHeight
+						drawList.AddLine(g.p1, g.p2, g.noiseColor)
+					}
+				}
+				// Update row/y value and offset by a few pixels
+				wY += spikeHeight + spikeRowOffset
+			}
+		}
+	}
 }
