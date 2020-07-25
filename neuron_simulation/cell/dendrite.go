@@ -80,17 +80,19 @@ func (d *Dendrite) APEfficacy(distance float64) float64 {
 
 // Integrate is the actual integration
 func (d *Dendrite) Integrate(spanT, t int) (psp float64) {
-	totalWeight := 0.0
+	dendrite := d.simJ.Neuron.Dendrites
+	// totalWeight := 0.0
 
 	for _, compartment := range d.compartments {
-		sum, total := compartment.Integrate(spanT, t)
+		// sum, total := compartment.Integrate(spanT, t)
+		sum, _ := compartment.Integrate(spanT, t)
 		psp += sum
-		totalWeight += total
+		// totalWeight += total
 	}
 
-	psp = math.Max(psp, d.minPsp)
+	psp = math.Max(psp, dendrite.MinPSPValue)
 
-	d.average = totalWeight / float64(d.synapses)
+	// d.average = totalWeight / float64(d.synapses)
 
 	return psp
 }

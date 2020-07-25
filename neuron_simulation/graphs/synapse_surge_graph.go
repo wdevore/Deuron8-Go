@@ -44,7 +44,7 @@ func (g *synapseSurgeGraph) Draw(environment api.IEnvironment, vertPos int) {
 	moData, _ := config.Data().(*model.ConfigJSON)
 	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(SurgePanelHeight)}, imgui.ConditionAlways)
 
-	imgui.Begin("Surge Graph")
+	imgui.Begin("Synapse Surge Graph")
 
 	g.drawHeader(environment)
 

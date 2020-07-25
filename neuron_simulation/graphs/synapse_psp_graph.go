@@ -44,7 +44,7 @@ func (g *synapsePspGraph) Draw(environment api.IEnvironment, vertPos int) {
 	moData, _ := config.Data().(*model.ConfigJSON)
 	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(PspPanelHeight)}, imgui.ConditionAlways)
 
-	imgui.Begin("PSP Graph")
+	imgui.Begin("Synapse PSP Graph")
 
 	g.drawHeader(environment)
 

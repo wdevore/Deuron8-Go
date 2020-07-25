@@ -1,6 +1,8 @@
 package cell
 
 import (
+	"fmt"
+
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
 )
@@ -55,12 +57,14 @@ func (c *Compartment) Reset() {
 
 // Integrate is the actual integration
 func (c *Compartment) Integrate(spanT, t int) (psp, totalWeight float64) {
+	psp = 0.0
 
 	for _, synapse := range c.synapses {
-		sum, weight := synapse.Integrate(spanT, t)
+		sum, _ := synapse.Integrate(spanT, t)
+		// sum, weight := synapse.Integrate(spanT, t)
 		psp += sum
-		totalWeight += weight
+		// totalWeight += weight
 	}
-
+	fmt.Println("comp psp: ", psp)
 	return psp, totalWeight
 }

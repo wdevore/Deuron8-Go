@@ -44,7 +44,7 @@ func (g *synapseWeightsGraph) Draw(environment api.IEnvironment, vertPos int) {
 	moData, _ := config.Data().(*model.ConfigJSON)
 	imgui.SetNextWindowSizeV(imgui.Vec2{X: float32(moData.WindowWidth - 10), Y: float32(PspPanelHeight)}, imgui.ConditionAlways)
 
-	imgui.Begin("Weights Graph")
+	imgui.Begin("Synapse Weights Graph")
 
 	g.drawHeader(environment)
 

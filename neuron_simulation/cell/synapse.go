@@ -1,6 +1,7 @@
 package cell
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -84,7 +85,7 @@ type Synapse struct {
 	// distance's value = 1.0 for synapses closest to soma. The farther out
 	// the value reaches a minimum of around ~0.25.
 	// distance is multiplied into soma.psp.
-	distance float64
+	// distance float64
 }
 
 // NewSynapse creates a new synapse
@@ -237,7 +238,8 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	} else {
 		s.psp = s.surge * math.Exp(-dt/syn.TaoN)
 	}
-	// fmt.Printf("|(%d) psp:%0.3f|", t, s.psp)
+
+	fmt.Printf("dt(%0.3f)|t(%d) surge:%0.3f, exp:%0.3f, psp:%0.3f|\n", dt, t, s.surge, math.Exp(-dt/syn.TaoP), s.psp)
 
 	// If an AP occurred (from the soma) we read the current psp value and add it to the "w"
 	if s.soma.Output() == 1 {
@@ -246,7 +248,9 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		// #######################################
 		// Read pre trace (aka psp) and slow AP trace for adjusting weight accordingly.
 		//     Post efficacy                                          weight dependence                 triplet sum
-		dwP = s.soma.EfficacyTrace() * s.distanceEfficacy * s.weightFactor(true, syn) * (s.psp + s.soma.ApSlowPrior())
+		wf := s.weightFactor(true, syn)
+		// fmt.Printf("wf:%0.3f", wf)
+		dwP = s.soma.EfficacyTrace() * s.distanceEfficacy * wf * (s.psp + s.soma.ApSlowPrior())
 		updateWeight = true
 	}
 
@@ -257,9 +261,9 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 
 	// Return the "value" of this synapse for this "t"
 	if s.excititory {
-		value = s.psp * s.w * s.distance
+		value = s.psp * s.w * syn.Distance
 	} else {
-		value = -s.psp * s.w * s.distance // is inhibitory
+		value = -s.psp * s.w * syn.Distance // is inhibitory
 	}
 
 	// Collect this synapse' values at this time step

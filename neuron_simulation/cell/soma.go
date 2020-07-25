@@ -1,6 +1,7 @@
 package cell
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -44,8 +45,8 @@ type Soma struct {
 	// -----------------------------------
 	// AP decay
 	// -----------------------------------
-	ntao  float64 // fast trace
-	ntaoS float64 // slow trace
+	// ntao  float64 // fast trace
+	// ntaoS float64 // slow trace
 
 	// Fast Surge
 	nFastSurge        float64
@@ -60,9 +61,8 @@ type Soma struct {
 	// The time-mark at which a spike arrived at a synapse
 	preT float64
 
-	refractoryPeriod float64
-	refractoryCnt    float64
-	refractoryState  bool
+	refractoryCnt   float64
+	refractoryState bool
 
 	// -----------------------------------
 	// Suppression
@@ -104,13 +104,19 @@ func (s *Soma) SetAxon(axon api.IAxon) {
 
 // Reset soma
 func (s *Soma) Reset() {
+	// Initial values to boot the cell
+	neuron := s.simJ.Neuron
+	s.nSlowSurge = neuron.SlowSurge
+	s.nFastSurge = neuron.FastSurge
+	s.threshold = neuron.Threshold
+	s.APMax = neuron.APMax
+
+	// Default values
 	s.apFast = 0.0
 	s.apSlow = 0.0
 	s.preT = -1000000000000000.0
 	s.refractoryState = false
 	s.refractoryCnt = 0
-	s.nSlowSurge = 0.0
-	s.nFastSurge = 0.0
 	s.efficacyTrace = 0.0
 	s.psp = 0
 
@@ -121,7 +127,7 @@ func (s *Soma) Reset() {
 // Integrate is the core the soma
 func (s *Soma) Integrate(spanT, t int) (spike int) {
 	dt := float64(t) - s.preT
-	nMod := s.simJ.Neuron
+	neuron := s.simJ.Neuron
 
 	s.efficacyTrace = s.Efficacy(dt)
 
@@ -134,7 +140,7 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 	if s.refractoryState {
 		// this algorithm should be the same as for the synapse or at least very
 		// close.
-		if s.refractoryCnt >= s.refractoryPeriod {
+		if s.refractoryCnt >= neuron.RefractoryPeriod {
 			s.refractoryState = false
 			s.refractoryCnt = 0
 			// fmt.Printf("Refractory ended at (%d)\n", int(t))
@@ -158,8 +164,8 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 
 			// Surge from action potential
 
-			s.nFastSurge = s.APMax + s.apFast*nMod.FastSurge*math.Exp(-s.apFast/nMod.Tao)
-			s.nSlowSurge = s.APMax + s.apSlow*nMod.SlowSurge*math.Exp(-s.apSlow/nMod.TaoS)
+			s.nFastSurge = s.APMax + s.apFast*neuron.FastSurge*math.Exp(-s.apFast/neuron.Tao)
+			s.nSlowSurge = s.APMax + s.apSlow*neuron.SlowSurge*math.Exp(-s.apSlow/neuron.TaoS)
 
 			// Reset time deltas
 			s.preT = float64(t)
@@ -170,9 +176,10 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 	// Prior is for triplet
 	s.apSlowPrior = s.apSlow
 
+	fmt.Printf("Soma:: %0.3f, %0.3f, psp:%0.3f\n", s.nFastSurge, s.nSlowSurge, s.psp)
 	// println(soma.nFastSurge, ", ", soma.nSlowSurge, ", ", soma.ntao, ", ", soma.ntaoS)
-	s.apFast = s.nFastSurge * math.Exp(-dt/nMod.Tao)
-	s.apSlow = s.nSlowSurge * math.Exp(-dt/nMod.TaoS)
+	s.apFast = s.nFastSurge * math.Exp(-dt/neuron.Tao)
+	s.apSlow = s.nSlowSurge * math.Exp(-dt/neuron.TaoS)
 
 	// Collect this soma' values at this time step
 	s.samples.CollectSoma(s, t)
