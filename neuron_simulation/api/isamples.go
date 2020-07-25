@@ -8,16 +8,27 @@ type ISamples interface {
 
 	Reset()
 
-	// SynapticData() map[int][]ISynapseSample
+	// Synaptic data
 	SynapticData() [][]ISynapseSample
 	SynapseData(int) []ISynapseSample
-	SomaData() []ISomaSample
 
 	SynapseSurgeMin() float64
 	SynapseSurgeMax() float64
 
 	SynapsePspMin() float64
 	SynapsePspMax() float64
+
+	SynapseWeightMin() float64
+	SynapseWeightMax() float64
+
+	// Soma data
+	SomaData() []ISomaSample
+	SomaPspMin() float64
+	SomaPspMax() float64
+	SomaAPFastMin() float64
+	SomaAPFastMax() float64
+	SomaAPSlowMin() float64
+	SomaAPSlowMax() float64
 }
 
 // ISynapseSample one for each synapse

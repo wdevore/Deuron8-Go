@@ -2,7 +2,7 @@
   "AutoSave": true,
   "StepEnabled": false,
   "WindowWidth": 2000,
-  "WindowHeight": 2000,
+  "WindowHeight": 1600,
   "Simulation": "sim_1.json",
   "OutputSomaAPFastFiles": "soma_apFast_samples_span_",
   "DataPath": "../data/",

@@ -130,6 +130,7 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 
 	// Default state
 	s.axon.Reset()
+
 	if s.refractoryState {
 		// this algorithm should be the same as for the synapse or at least very
 		// close.

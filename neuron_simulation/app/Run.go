@@ -65,6 +65,11 @@ func run(p Platform, r Renderer, environment api.IEnvironment) {
 	spikeGraph := graphs.NewSpikeGraph()
 	surgeGraph := graphs.NewSynapseSurgeGraph()
 	pspGraph := graphs.NewSynapsePspGraph()
+	weightsGraph := graphs.NewSynapseWeightsGraph()
+
+	somaPspGraph := graphs.NewSomaPspGraph()
+	somaAPFastGraph := graphs.NewSomaAPFastGraph()
+	somaAPSlowGraph := graphs.NewSomaAPSlowGraph()
 
 	ch := make(chan string)
 
@@ -96,6 +101,18 @@ func run(p Platform, r Renderer, environment api.IEnvironment) {
 
 		vertPos += graphs.SurgePanelHeight
 		pspGraph.Draw(environment, vertPos)
+
+		vertPos += graphs.PspPanelHeight
+		weightsGraph.Draw(environment, vertPos)
+
+		vertPos += graphs.WeightsPanelHeight
+		somaPspGraph.Draw(environment, vertPos)
+
+		vertPos += graphs.SomaPspPanelHeight
+		somaAPFastGraph.Draw(environment, vertPos)
+
+		vertPos += graphs.SomaAPFastPanelHeight
+		somaAPSlowGraph.Draw(environment, vertPos)
 		// ---------------------------------------------------------
 
 		gui.BuildGui(environment)

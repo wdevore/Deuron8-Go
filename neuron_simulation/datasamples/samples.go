@@ -72,8 +72,13 @@ type samples struct {
 
 	somaData []api.ISomaSample
 
-	synapseSurgeMin, synapseSurgeMax float64
-	synapsePspMin, synapsePspMax     float64
+	synapseSurgeMin, synapseSurgeMax   float64
+	synapsePspMin, synapsePspMax       float64
+	synapseWeightMin, synapseWeightMax float64
+
+	somaPspMin, somaPspMax       float64
+	somaAPFastMin, somaAPFastMax float64
+	somaAPSlowMin, somaAPSlowMax float64
 }
 
 // NewSamples returns a samples collection
@@ -91,12 +96,22 @@ func (s *samples) Reset() {
 
 	s.synapseSurgeMin = 1000000000000.0
 	s.synapseSurgeMax = -1000000000000.0
+	s.synapsePspMin = 1000000000000.0
+	s.synapsePspMax = -1000000000000.0
+	s.synapseWeightMin = 1000000000000.0
+	s.synapseWeightMax = -1000000000000.0
+
+	s.somaPspMin = 1000000000000.0
+	s.somaPspMax = -1000000000000.0
+	s.somaAPFastMin = 1000000000000.0
+	s.somaAPFastMax = -1000000000000.0
+	s.somaAPSlowMin = 1000000000000.0
+	s.somaAPSlowMax = -1000000000000.0
 }
 
 func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 	// Check if a channel is already in play. Create a new channel if not.
 	if s.synData[id] == nil {
-		// fmt.Println("create channel:", id)
 		s.synData[id] = []api.ISynapseSample{}
 	}
 
@@ -104,9 +119,10 @@ func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 
 	s.synapseSurgeMin = math.Min(s.synapseSurgeMin, synapse.Surge())
 	s.synapseSurgeMax = math.Max(s.synapseSurgeMax, synapse.Surge())
-	// fmt.Println(s.synapseSurgeMin, ", ", s.synapseSurgeMax)
 	s.synapsePspMin = math.Min(s.synapsePspMin, synapse.Psp())
 	s.synapsePspMax = math.Max(s.synapsePspMax, synapse.Psp())
+	s.synapseWeightMin = math.Min(s.synapseWeightMin, synapse.Weight())
+	s.synapseWeightMax = math.Max(s.synapseWeightMax, synapse.Weight())
 
 	s.synData[id] = append(s.synData[id],
 		&SynapseSamples{
@@ -122,13 +138,20 @@ func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 }
 
 func (s *samples) CollectSoma(soma api.ISoma, t int) {
+	s.somaPspMin = math.Min(s.somaPspMin, soma.Psp())
+	s.somaPspMax = math.Max(s.somaPspMax, soma.Psp())
+	s.somaAPFastMin = math.Min(s.somaAPFastMin, soma.APFast())
+	s.somaAPFastMax = math.Max(s.somaAPFastMax, soma.APFast())
+	s.somaAPSlowMin = math.Min(s.somaAPSlowMin, soma.APSlow())
+	s.somaAPSlowMax = math.Max(s.somaAPSlowMax, soma.APSlow())
+
 	s.somaData = append(s.somaData,
 		&SomaSamples{
 			t:      t,
 			apFast: soma.APFast(),
 			apSlow: soma.APSlow(),
-			output: soma.Output(), // Spikes
 			psp:    soma.Psp(),
+			output: soma.Output(), // Spikes
 		},
 	)
 }
@@ -167,4 +190,36 @@ func (s *samples) SynapsePspMin() float64 {
 
 func (s *samples) SynapsePspMax() float64 {
 	return s.synapseSurgeMax
+}
+
+func (s *samples) SynapseWeightMin() float64 {
+	return s.synapseWeightMin
+}
+
+func (s *samples) SynapseWeightMax() float64 {
+	return s.synapseWeightMax
+}
+
+func (s *samples) SomaPspMin() float64 {
+	return s.somaPspMin
+}
+
+func (s *samples) SomaPspMax() float64 {
+	return s.somaPspMax
+}
+
+func (s *samples) SomaAPFastMin() float64 {
+	return s.somaAPFastMin
+}
+
+func (s *samples) SomaAPFastMax() float64 {
+	return s.somaAPFastMax
+}
+
+func (s *samples) SomaAPSlowMin() float64 {
+	return s.somaAPSlowMin
+}
+
+func (s *samples) SomaAPSlowMax() float64 {
+	return s.somaAPSlowMax
 }
