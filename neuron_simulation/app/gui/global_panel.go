@@ -15,6 +15,8 @@ var (
 
 // BuildGlobalPanel ...
 func BuildGlobalPanel(environment api.IEnvironment) {
+	imgui.SetNextWindowPos(imgui.Vec2{X: 715, Y: 20.0})
+
 	imgui.Begin("Global Panel")
 	config := environment.Config()
 

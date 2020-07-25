@@ -12,14 +12,12 @@ import (
 var (
 	activeSyn      = 0
 	activeSynSlide = int32(0)
-	applyToAll     bool
 )
 
 // BuildSynapsePanel is an embedded panel inside the parent Simulation panel
 func BuildSynapsePanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Synapse") {
 		sim := environment.Sim()
-		config := environment.Config()
 		synMod := environment.Synapses().Data().(*model.SynapsesJSON)
 
 		simData, _ := sim.Data().(*model.SimJSON)
@@ -318,16 +316,6 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			simData.ActiveSynapse = int(activeSynSlide)
 		}
 		imgui.PopItemWidth()
-
-		changed := imgui.Checkbox("Apply To All", &applyToAll)
-		if changed {
-			config.Changed()
-			if applyToAll {
-				fmt.Println("applyToAll enabled")
-			} else {
-				fmt.Println("applyToAll disabled")
-			}
-		}
 
 		imgui.PopItemWidth()
 	}

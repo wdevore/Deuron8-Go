@@ -15,6 +15,8 @@ var (
 
 // BuildSimulationPanel ...
 func BuildSimulationPanel(environment api.IEnvironment) {
+	imgui.SetNextWindowPos(imgui.Vec2{X: 1390, Y: 20.0})
+
 	imgui.Begin("Simulation")
 	sim := environment.Sim()
 

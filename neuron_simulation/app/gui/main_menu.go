@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	autosave bool
+	autosave   bool
+	applyToAll bool
 )
 
 // BuildMenuBar ...
@@ -67,6 +68,18 @@ func BuildMenuBar(environment api.IEnvironment) {
 					fmt.Println("Step disabled")
 				}
 			}
+
+			// Any property change to a synapse is applied to all of them.
+			changed = imgui.Checkbox("Apply To All", &applyToAll)
+			if changed {
+				config.Changed()
+				if applyToAll {
+					fmt.Println("applyToAll enabled")
+				} else {
+					fmt.Println("applyToAll disabled")
+				}
+			}
+
 			imgui.EndMenu()
 		}
 
