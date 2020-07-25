@@ -108,76 +108,17 @@ func (g *spikeGraph) drawHeader(environment api.IEnvironment) {
 		imgui.PushItemWidth(200)
 
 		moData, _ := config.Data().(*model.ConfigJSON)
-		rangeStart := int32(moData.RangeStart)
-		rangeEnd := int32(moData.RangeEnd)
-		duration := int32(moData.Duration)
 
-		changedS := imgui.DragIntV("RangeStart##1", &rangeStart, 1.0, 0, int32(moData.RangeEnd), "%d")
-
-		imgui.SameLine()
-
-		changedE := imgui.DragIntV("RangeEnd##1", &rangeEnd, 1.0, rangeStart, duration, "%d")
-
-		if changedS || changedE {
-			if rangeStart < rangeEnd {
-				config.Changed()
-				moData.RangeStart = int(rangeStart)
-				moData.RangeEnd = int(rangeEnd)
-			}
-		}
-
-		scrollVelocity := float32(moData.Scroll)
-
-		changed := imgui.SliderFloatV("Scroll Velocity", &scrollVelocity, -5.0, 5.0, "%.2f", 1.0)
-		if changed {
-			moData.Scroll = float64(scrollVelocity)
-		}
-
-		velocity := ScrollVelocity(moData.Scroll)
-		rangeDx := rangeEnd - rangeStart
-
-		if moData.Scroll < 0 {
-			rangeStart += int32(velocity)
-			// Left
-			if rangeStart > 0 {
-				rangeEnd = rangeStart + rangeDx
-			} else {
-				rangeStart = 0
-				rangeEnd = rangeStart + rangeDx
-			}
-			config.Changed()
-			moData.RangeStart = int(rangeStart)
-			moData.RangeEnd = int(rangeEnd)
-		} else if moData.Scroll > 0 {
-			rangeEnd += int32(velocity)
-			if rangeEnd < duration {
-				rangeStart = rangeEnd - rangeDx
-			} else {
-				rangeEnd = duration
-				rangeStart = rangeEnd - rangeDx
-			}
-			config.Changed()
-			moData.RangeStart = int(rangeStart)
-			moData.RangeEnd = int(rangeEnd)
-		}
-
-		// If above slider is released we clear the velocity.
-		if !imgui.IsItemActive() {
-			moData.Scroll = 0.0
-		}
-
-		imgui.SameLineV(250, 100)
-
-		imgui.PushItemWidth(400)
+		imgui.PushItemWidth(200)
 		imgui.Checkbox("Show Noise", &g.showPoissonData)
 		imgui.PopItemWidth()
 
-		imgui.SameLineV(350, 100)
+		imgui.SameLineV(150, 10)
 		imgui.Checkbox("Show Stimulus", &g.showStimData)
 
 		barRange := moData.RangeEnd - moData.RangeStart
 		if barRange < maxVerticalBarsLimit {
-			imgui.SameLineV(500, 100)
+			imgui.SameLineV(300, 100)
 
 			// Limit bars to less than Max because Drawlist is limited to 2^16 items.
 			imgui.Checkbox("Show Markers", &g.showMarkers)

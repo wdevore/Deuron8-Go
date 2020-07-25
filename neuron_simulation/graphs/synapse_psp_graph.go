@@ -63,63 +63,17 @@ func (g *synapsePspGraph) drawHeader(environment api.IEnvironment) {
 		imgui.PushItemWidth(200)
 
 		moData, _ := config.Data().(*model.ConfigJSON)
-		rangeStart := int32(moData.RangeStart)
-		rangeEnd := int32(moData.RangeEnd)
-		duration := int32(moData.Duration)
 
-		changedS := imgui.DragIntV("RangeStart##3", &rangeStart, 1.0, 0, int32(moData.RangeEnd), "%d")
+		barRange := moData.RangeEnd - moData.RangeStart
+		if barRange < maxVerticalBarsLimit {
 
-		imgui.SameLine()
-
-		changedE := imgui.DragIntV("RangeEnd##3", &rangeEnd, 1.0, rangeStart, duration, "%d")
-
-		if changedS || changedE {
-			if rangeStart < rangeEnd {
-				config.Changed()
-				moData.RangeStart = int(rangeStart)
-				moData.RangeEnd = int(rangeEnd)
-			}
+			// Limit bars to less than Max because Drawlist is limited to 2^16 items.
+			imgui.Checkbox("Show Markers", &g.showMarkers)
+		} else {
+			g.showMarkers = false
 		}
 
-		scrollVelocity := float32(moData.Scroll)
-
-		changed := imgui.SliderFloatV("Scroll Velocity", &scrollVelocity, -5.0, 5.0, "%.2f", 1.0)
-		if changed {
-			moData.Scroll = float64(scrollVelocity)
-		}
-
-		velocity := ScrollVelocity(moData.Scroll)
-		rangeDx := rangeEnd - rangeStart
-
-		if moData.Scroll < 0 {
-			rangeStart += int32(velocity)
-			// Left
-			if rangeStart > 0 {
-				rangeEnd = rangeStart + rangeDx
-			} else {
-				rangeStart = 0
-				rangeEnd = rangeStart + rangeDx
-			}
-			config.Changed()
-			moData.RangeStart = int(rangeStart)
-			moData.RangeEnd = int(rangeEnd)
-		} else if moData.Scroll > 0 {
-			rangeEnd += int32(velocity)
-			if rangeEnd < duration {
-				rangeStart = rangeEnd - rangeDx
-			} else {
-				rangeEnd = duration
-				rangeStart = rangeEnd - rangeDx
-			}
-			config.Changed()
-			moData.RangeStart = int(rangeStart)
-			moData.RangeEnd = int(rangeEnd)
-		}
-
-		// If above slider is released we clear the velocity.
-		if !imgui.IsItemActive() {
-			moData.Scroll = 0.0
-		}
+		imgui.PopItemWidth()
 
 		imgui.TreePop()
 	}
