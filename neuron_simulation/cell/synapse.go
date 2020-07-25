@@ -1,7 +1,6 @@
 package cell
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -239,7 +238,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		s.psp = s.surge * math.Exp(-dt/syn.TaoN)
 	}
 
-	fmt.Printf("dt(%0.3f)|t(%d) surge:%0.3f, exp:%0.3f, psp:%0.3f|\n", dt, t, s.surge, math.Exp(-dt/syn.TaoP), s.psp)
+	// fmt.Printf("dt(%0.3f)|t(%d) surge:%0.3f, exp:%0.3f, psp:%0.3f|\n", dt, t, s.surge, math.Exp(-dt/syn.TaoP), s.psp)
 
 	// If an AP occurred (from the soma) we read the current psp value and add it to the "w"
 	if s.soma.Output() == 1 {

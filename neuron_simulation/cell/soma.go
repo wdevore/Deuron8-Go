@@ -1,7 +1,6 @@
 package cell
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -176,7 +175,7 @@ func (s *Soma) Integrate(spanT, t int) (spike int) {
 	// Prior is for triplet
 	s.apSlowPrior = s.apSlow
 
-	fmt.Printf("Soma:: %0.3f, %0.3f, psp:%0.3f\n", s.nFastSurge, s.nSlowSurge, s.psp)
+	// fmt.Printf("Soma:: %0.3f, %0.3f, psp:%0.3f\n", s.nFastSurge, s.nSlowSurge, s.psp)
 	// println(soma.nFastSurge, ", ", soma.nSlowSurge, ", ", soma.ntao, ", ", soma.ntaoS)
 	s.apFast = s.nFastSurge * math.Exp(-dt/neuron.Tao)
 	s.apSlow = s.nSlowSurge * math.Exp(-dt/neuron.TaoS)

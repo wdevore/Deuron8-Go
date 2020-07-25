@@ -306,7 +306,7 @@ func (g *spikeGraph) drawVerticalMarkers(config api.IModel, drawList imgui.DrawL
 }
 
 func (g *spikeGraph) drawSomaData(environment api.IEnvironment, drawList imgui.DrawList) {
-	wY := 200.0 + 40.0 // Offset from any previous rows
+	wY := 200.0 + 40.0 + 10.0 // Offset from any previous rows
 	config := environment.Config()
 	moData, _ := config.Data().(*model.ConfigJSON)
 	rangeStart := int32(moData.RangeStart)
@@ -330,7 +330,7 @@ func (g *spikeGraph) drawSomaData(environment api.IEnvironment, drawList imgui.D
 				g.p1.X = float32(lX)
 				g.p1.Y = float32(lY)
 				g.p2.X = float32(lX)
-				g.p2.Y = float32(lY) + spikeHeight
+				g.p2.Y = float32(lY) + spikeHeight*2
 				drawList.AddLine(g.p1, g.p2, g.spikeColor)
 			}
 		}

@@ -1,8 +1,6 @@
 package cell
 
 import (
-	"fmt"
-
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
 )
@@ -65,6 +63,6 @@ func (c *Compartment) Integrate(spanT, t int) (psp, totalWeight float64) {
 		psp += sum
 		// totalWeight += weight
 	}
-	fmt.Println("comp psp: ", psp)
+
 	return psp, totalWeight
 }
