@@ -5,4 +5,5 @@ type IBitStream interface {
 	Reset()
 	Output() int
 	Step()
+	Update(IModel)
 }

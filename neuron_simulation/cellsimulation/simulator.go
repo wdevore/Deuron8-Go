@@ -20,6 +20,9 @@ type Simulator struct {
 	// Stimulus
 	stimuli []api.IBitStream
 
+	// Synapses
+	synapses []api.ISynapse
+
 	neuron api.ICell
 	t      int
 
@@ -80,6 +83,7 @@ func (si *Simulator) Build() {
 		// route noise to synapse
 		synapse.SetStream(stimulus)
 		synapse.Initialize(false)
+		si.synapses = append(si.synapses, synapse)
 		genSynID++
 	}
 
@@ -89,6 +93,7 @@ func (si *Simulator) Build() {
 		// route noise to synapse
 		synapse.SetStream(noise)
 		synapse.Initialize(true)
+		si.synapses = append(si.synapses, synapse)
 		genSynID++
 	}
 
@@ -129,6 +134,8 @@ func (si *Simulator) Run(ch chan string) {
 				fmt.Println("Simulation has been reset")
 				si.reset()
 				si.running = false
+			case "propertyChange":
+				si.propertyChange(si.environment)
 			case "killSim":
 				loop = false
 			}
@@ -144,7 +151,7 @@ func (si *Simulator) Run(ch chan string) {
 					// 		fmt.Printf("(%d) inp: %d\n", syn.Input(), syn.T())
 					// 	}
 					// }
-					si.reset()
+					// si.reset()
 					si.running = false
 					si.environment.Run(si.running)
 					fmt.Println("Simulation finished")
@@ -203,5 +210,34 @@ func (si *Simulator) reset() {
 
 	for _, stimulus := range si.stimuli {
 		stimulus.Reset()
+	}
+
+	si.environment.Samples().Reset()
+}
+
+func (si *Simulator) propertyChange(environment api.IEnvironment) {
+	simMod := environment.Sim()
+	// conMod := environment.Config()
+
+	switch environment.Parms() {
+	case "PoissonLambda":
+		// Update all Noise streams
+		for _, noise := range si.noises {
+			noise.Update(simMod)
+		}
+	case "StimulusScaler":
+		// The Environment has already scaled the stimulus
+		// prior to the propertyChange event here.
+		siData, _ := simMod.Data().(*model.SimJSON)
+		si.stimuli = nil
+
+		// We need to reassign the same stream to the same synapse.
+		for i, bitstream := range environment.Stimulus() {
+			// Rebind all patterns to each stimulus stream
+			synapse := si.synapses[i]
+			stim := streams.NewStimulusStream(bitstream, siData.Hertz)
+			synapse.SetStream(stim)
+			si.stimuli = append(si.stimuli, stim)
+		}
 	}
 }

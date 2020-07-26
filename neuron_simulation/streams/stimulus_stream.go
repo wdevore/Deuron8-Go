@@ -29,7 +29,7 @@ type stimulusStream struct {
 	count int
 
 	presentingPattern bool
-	patternIdx        int
+	bitIdx            int
 }
 
 // Example Format:
@@ -73,7 +73,7 @@ func NewStimulusStream(pattern []int, frequency int) api.IBitStream {
 func (s *stimulusStream) Reset() {
 	s.count = 0
 	s.presentingPattern = true
-	s.patternIdx = 0
+	s.bitIdx = 0
 }
 
 // Step ...
@@ -98,14 +98,14 @@ func (s *stimulusStream) Step() {
 			s.count = s.ipi
 			s.presentingPattern = false
 		} else {
-			s.patternIdx++
+			s.bitIdx++
 		}
 	} else {
 		if s.count <= 0 {
 			// Reset counter to Pattern
 			s.count = len(s.pattern)
 			// Reset pattern for next presentation
-			s.patternIdx = 0
+			s.bitIdx = 0
 			s.presentingPattern = true
 		}
 	}
@@ -114,8 +114,14 @@ func (s *stimulusStream) Step() {
 // Output ...
 func (s *stimulusStream) Output() int {
 	if s.presentingPattern {
-		return s.pattern[s.patternIdx]
+		return s.pattern[s.bitIdx]
 	}
 
 	return 0
+}
+
+// Update changes the stream's properties
+func (s *stimulusStream) Update(mod api.IModel) {
+	// conData, _ := mod.Data().(*model.ConfigJSON)
+
 }

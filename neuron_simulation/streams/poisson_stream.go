@@ -4,6 +4,7 @@ import (
 	"golang.org/x/exp/rand"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
 	"gonum.org/v1/gonum/stat/distuv"
 )
 
@@ -63,7 +64,7 @@ func NewPoissonStream(seed uint64, averagePerInterval float64) api.IBitStream {
 	o := new(poissonStream)
 
 	o.seed = seed
-	o.averagePerInterval = averagePerInterval
+	o.averagePerInterval = averagePerInterval // Lambda
 
 	o.Reset()
 	return o
@@ -74,6 +75,7 @@ func (p *poissonStream) Reset() {
 	psource := rand.NewSource(uint64(p.seed))
 	p.poisson = distuv.Poisson{Lambda: p.averagePerInterval, Src: psource}
 	p.isi = p.next()
+	p.output = 0
 }
 
 // Step ...
@@ -91,6 +93,12 @@ func (p *poissonStream) Step() {
 // Output ...
 func (p *poissonStream) Output() int {
 	return p.output
+}
+
+// Update changes the stream's properties
+func (p *poissonStream) Update(simMod api.IModel) {
+	simData, _ := simMod.Data().(*model.SimJSON)
+	p.averagePerInterval = simData.NoiseLambda
 }
 
 // Create an event per interval of time, for example, spikes in a 1 sec span.

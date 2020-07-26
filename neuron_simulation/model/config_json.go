@@ -16,7 +16,7 @@ type ConfigJSON struct {
 	DataOutputPath           string
 	RangeEnd                 int
 	SourceStimulus           string
-	StimExpander             int
+	StimulusScaler           int
 	Duration                 int
 	OutputDendriteAvgFiles   string
 	RangeStart               int

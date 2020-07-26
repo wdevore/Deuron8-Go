@@ -115,14 +115,18 @@ func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 		s.synData[id] = []api.ISynapseSample{}
 	}
 
-	// fmt.Printf("|(%d) surge:%0.3f|", t, synapse.Surge())
-
 	s.synapseSurgeMin = math.Min(s.synapseSurgeMin, synapse.Surge())
 	s.synapseSurgeMax = math.Max(s.synapseSurgeMax, synapse.Surge())
 	s.synapsePspMin = math.Min(s.synapsePspMin, synapse.Psp())
 	s.synapsePspMax = math.Max(s.synapsePspMax, synapse.Psp())
 	s.synapseWeightMin = math.Min(s.synapseWeightMin, synapse.Weight())
 	s.synapseWeightMax = math.Max(s.synapseWeightMax, synapse.Weight())
+
+	// fmt.Printf("(%03d:%03d) W:%0.3f, Sur:%0.3f, Psp:%0.3f, SuMa:%03.f, SuMi:%0.3f, I:%d,\n",
+	// 	t, id, synapse.Weight(), synapse.Surge(), synapse.Psp(),
+	// 	s.synapseSurgeMin, s.synapseSurgeMax,
+	// 	synapse.Input(),
+	// )
 
 	s.synData[id] = append(s.synData[id],
 		&SynapseSamples{

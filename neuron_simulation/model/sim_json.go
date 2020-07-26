@@ -63,7 +63,6 @@ type SimJSON struct {
 	Hertz             int
 	PoissonPatternMax float64
 	PoissonPatternMin float64
-	StimulusScaler    float64
 
 	// Poisson stream Lambda
 	// Firing rate = spikes over an interval of time or

@@ -22,9 +22,10 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 
 	if imgui.CollapsingHeader("Simulation Global") {
 		simData, _ := sim.Data().(*model.SimJSON)
+		moData, _ := environment.Config().Data().(*model.ConfigJSON)
 
 		imgui.PushItemWidth(80)
-		textBuffer = fmt.Sprintf("%3.3f", simData.StimulusScaler)
+		textBuffer = fmt.Sprintf("%d", moData.StimulusScaler)
 		entered := imgui.InputTextV(
 			"Stim Scaler", &textBuffer,
 			imgui.InputTextFlagsEnterReturnsTrue|
@@ -34,11 +35,14 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 
 		if entered {
 			sim.Changed()
-			fv, err := strconv.ParseFloat(textBuffer, 64)
+			fv, err := strconv.ParseInt(textBuffer, 10, 64)
 			if err == nil {
 				fmt.Println("Stim Scaler: ", fv)
 				sim.Changed()
-				simData.StimulusScaler = fv
+				moData.StimulusScaler = int(fv)
+				// Update all Stimulus streams in the simulator
+				environment.SetParms("StimulusScaler")
+				environment.IssueCmd("propertyChange")
 			}
 		}
 
@@ -61,21 +65,21 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 			}
 		}
 
-		imgui.SameLineV(350, 10)
-		// ----------------------------------------------------------
-		actSyn = int32(simData.ActiveSynapse)
-		entered = imgui.InputIntV("Active Synapse", &actSyn, 1, 100,
-			imgui.InputTextFlagsEnterReturnsTrue|imgui.InputTextFlagsCharsDecimal)
-		if entered {
-			if actSyn < 0 {
-				actSyn = 0
-			} else if actSyn >= int32(simData.Synapses) {
-				actSyn = int32(simData.Synapses) - 1
-			}
-			sim.Changed()
-			fmt.Println("Active Synapse: ", actSyn)
-			simData.ActiveSynapse = int(actSyn)
-		}
+		// imgui.SameLineV(350, 10)
+		// // ----------------------------------------------------------
+		// actSyn = int32(simData.ActiveSynapse)
+		// entered = imgui.InputIntV("Active Synapse", &actSyn, 1, 100,
+		// 	imgui.InputTextFlagsEnterReturnsTrue|imgui.InputTextFlagsCharsDecimal)
+		// if entered {
+		// 	if actSyn < 0 {
+		// 		actSyn = 0
+		// 	} else if actSyn >= int32(simData.Synapses) {
+		// 		actSyn = int32(simData.Synapses) - 1
+		// 	}
+		// 	sim.Changed()
+		// 	fmt.Println("Active Synapse: ", actSyn)
+		// 	simData.ActiveSynapse = int(actSyn)
+		// }
 
 		imgui.PopItemWidth()
 	}

@@ -19,6 +19,7 @@ type environmentS struct {
 	samples api.ISamples
 
 	stimulus          [][]int
+	expandedStimulus  [][]int
 	stimulusStreamCnt int
 
 	relativePath string
@@ -26,6 +27,7 @@ type environmentS struct {
 
 	simChan chan string
 	cmd     string
+	params  string
 
 	simRunning bool
 }
@@ -62,7 +64,7 @@ func (e *environmentS) loadStimulus() {
 
 	defer eConfFile.Close()
 
-	e.stimulus = [][]int{}
+	e.expandedStimulus = [][]int{}
 
 	scanner := bufio.NewScanner(eConfFile)
 	for scanner.Scan() {
@@ -76,26 +78,54 @@ func (e *environmentS) loadStimulus() {
 		// size of stimulus is 10 + (10*3) = 40
 		// StimExpander thus becomes an expanding factor. For every bit in
 		// the pattern we append StimExpander 0s.
-		if moData.StimExpander == 0 {
+		if moData.StimulusScaler == 0 {
 			// Special case of 0 then duration is unchanged (i.e. reflected)
-			moData.StimExpander = 1 // Note: we don't call Changed() on purpose.
+			moData.StimulusScaler = 1 // Note: we don't call Changed() on purpose.
 		} else {
-			duration = (duration * moData.StimExpander)
+			duration = (duration * moData.StimulusScaler)
 		}
 
 		expanded := make([]int, duration)
+		stim := []int{}
 
 		col := 0
 		for _, c := range pattern {
 			if c == '|' {
 				expanded[col] = 1
+				stim = append(stim, 1)
+			} else {
+				stim = append(stim, 0)
 			}
 			// Move col "past" the expanded positions.
-			col += moData.StimExpander
+			col += moData.StimulusScaler
 		}
 
-		e.stimulus = append(e.stimulus, expanded)
+		e.stimulus = append(e.stimulus, stim)
+		e.expandedStimulus = append(e.expandedStimulus, expanded)
+
 		e.stimulusStreamCnt++
+	}
+}
+
+func (e *environmentS) expandStimulus(scaler int) {
+	// Reset expanded data
+	e.expandedStimulus = [][]int{}
+
+	// All channels are the same length, pick 0
+	duration := (len(e.stimulus[0]) * scaler)
+
+	// Iterate each channel and expand it.
+	for _, stim := range e.stimulus {
+		expanded := make([]int, duration)
+		col := 0
+		for _, spike := range stim {
+			if spike == 1 {
+				expanded[col] = 1
+			}
+			// Move col "past" the expanded positions.
+			col += scaler
+		}
+		e.expandedStimulus = append(e.expandedStimulus, expanded)
 	}
 }
 
@@ -159,24 +189,11 @@ func (e *environmentS) StimulusCount() int {
 }
 
 func (e *environmentS) Stimulus() [][]int {
-	return e.stimulus
+	return e.expandedStimulus
 }
 
 func (e *environmentS) StimulusAt(idx int) []int {
-	return e.stimulus[idx]
-}
-
-func (e *environmentS) IssueCmd(cmd string) {
-	e.cmd = cmd
-}
-func (e *environmentS) IsCmdIssued() bool {
-	return e.cmd != ""
-}
-func (e *environmentS) CmdIssued() {
-	e.cmd = ""
-}
-func (e *environmentS) Cmd() string {
-	return e.cmd
+	return e.expandedStimulus[idx]
 }
 
 func (e *environmentS) Run(state bool) {
@@ -185,4 +202,43 @@ func (e *environmentS) Run(state bool) {
 
 func (e *environmentS) IsRunning() bool {
 	return e.simRunning
+}
+
+// --------------------------------------------------------------
+// Simple message command system
+// --------------------------------------------------------------
+
+// The issued "cmd" is recognized in Run.go's run() method
+func (e *environmentS) IssueCmd(cmd string) {
+	e.cmd = cmd
+
+	switch cmd {
+	case "propertyChange":
+		switch e.params {
+		case "StimulusScaler":
+			fmt.Println("Scaler changed. Adjusting stimulus expansion.")
+			moData, _ := e.config.Data().(*model.ConfigJSON)
+			e.expandStimulus(moData.StimulusScaler)
+		}
+	}
+}
+
+func (e *environmentS) IsCmdIssued() bool {
+	return e.cmd != ""
+}
+
+func (e *environmentS) CmdIssued() {
+	e.cmd = ""
+}
+
+func (e *environmentS) Cmd() string {
+	return e.cmd
+}
+
+func (e *environmentS) Parms() string {
+	return e.params
+}
+
+func (e *environmentS) SetParms(parms string) {
+	e.params = parms
 }

@@ -13,7 +13,6 @@ import (
 func BuildPoissonPanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Poisson") {
 		sim := environment.Sim()
-
 		simData, _ := sim.Data().(*model.SimJSON)
 
 		imgui.PushItemWidth(80)
@@ -30,9 +29,12 @@ func BuildPoissonPanel(environment api.IEnvironment) {
 			sim.Changed()
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
-				fmt.Println("Firing Rate: ", fv)
+				fmt.Println("Firing Rate (Lambda): ", fv)
 				sim.Changed()
 				simData.NoiseLambda = fv
+				// Update all Poisson streams in the simulator
+				environment.SetParms("PoissonLambda")
+				environment.IssueCmd("propertyChange")
 			}
 		}
 

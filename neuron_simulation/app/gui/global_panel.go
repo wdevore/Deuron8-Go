@@ -102,6 +102,17 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 		moData.Scroll = 0.0
 	}
 
+	sim := environment.Sim()
+	simData, _ := sim.Data().(*model.SimJSON)
+
+	imgui.PushItemWidth(300)
+	slide := imgui.SliderInt("Synapse", &activeSynSlide, 0, int32(simData.Synapses)-1)
+	if slide {
+		sim.Changed()
+		simData.ActiveSynapse = int(activeSynSlide)
+	}
+	imgui.PopItemWidth()
+
 	imgui.End()
 
 }

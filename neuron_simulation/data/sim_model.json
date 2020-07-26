@@ -1,14 +1,13 @@
 {
   "Synapses": 10,
-  "ActiveSynapse": 3,
+  "ActiveSynapse": 0,
   "PoissonPatternSpread": 50,
   "PercentOfExcititorySynapses": 80,
   "Hertz": 5,
   "PoissonPatternMax": 300,
   "PoissonPatternMin": 50,
-  "StimulusScaler": 9,
+  "NoiseLambda": 120,
   "NoiseCount": 10,
-  "NoiseLambda": 50.0,
   "Neuron": {
     "Tao": 10,
     "FastSurge": 20,
@@ -37,13 +36,13 @@
             "Mu": 0.5,
             "Distance": 1,
             "Lambda": 1,
-            "Amb": 10.0,
-            "W": 5.0,
-            "Alpha": 1.0,
+            "Amb": 10,
+            "W": 5,
+            "Alpha": 1,
             "LearningRateSlow": 0.2,
             "LearningRateFast": 0.3,
             "TaoI": 10,
-            "Ama": 1.0
+            "Ama": 1
           }
         }
       ]

@@ -307,16 +307,6 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			}
 		}
 
-		// Row 5 *****************************************************
-		imgui.PushItemWidth(450)
-		slide := imgui.SliderInt("ActiveSynapse", &activeSynSlide, 0, int32(simData.Synapses)-1)
-		if slide {
-			sim.Changed()
-			// fmt.Println("slide: ", activeSynSlide)
-			simData.ActiveSynapse = int(activeSynSlide)
-		}
-		imgui.PopItemWidth()
-
 		imgui.PopItemWidth()
 	}
 }
