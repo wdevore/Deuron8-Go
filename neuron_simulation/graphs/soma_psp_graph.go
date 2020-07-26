@@ -21,9 +21,6 @@ type somaPspGraph struct {
 	thresholdColor           imgui.PackedColor
 	zeroColor                imgui.PackedColor
 	verticalMarkerLightColor imgui.PackedColor
-
-	p1 imgui.Vec2
-	p2 imgui.Vec2
 }
 
 // NewSomaPspGraph creates imgui graph
@@ -34,9 +31,6 @@ func NewSomaPspGraph() api.IGraph {
 	o.verticalMarkerLightColor = imgui.Packed(color.Gray{Y: 64})
 	o.thresholdColor = imgui.Packed(color.RGBA{R: 127, G: 127, B: 255, A: 255})
 	o.zeroColor = imgui.Packed(color.RGBA{R: 200, G: 200, B: 127, A: 255})
-
-	o.p1 = imgui.Vec2{}
-	o.p2 = imgui.Vec2{}
 
 	return o
 }
@@ -126,11 +120,11 @@ func (g *somaPspGraph) drawVerticalMarkers(config api.IModel, drawList imgui.Dra
 		lX, lY := MapWindowToLocal(wX, 0.0, canvasPos)
 
 		// Draw time marker
-		g.p1.X = float32(lX)
-		g.p1.Y = float32(lY)
-		g.p2.X = float32(lX)
-		g.p2.Y = float32(lY) + canvasSize.Y
-		drawList.AddLine(g.p1, g.p2, g.verticalMarkerLightColor)
+		p1.X = float32(lX)
+		p1.Y = float32(lY)
+		p2.X = float32(lX)
+		p2.Y = float32(lY) + canvasSize.Y
+		drawList.AddLine(p1, p2, g.verticalMarkerLightColor)
 
 		timePos++
 	}
@@ -170,11 +164,11 @@ func (g *somaPspGraph) drawData(environment api.IEnvironment, drawList imgui.Dra
 
 			lX, lY := MapWindowToLocal(wX, wY, canvasPos)
 
-			g.p1.X = float32(plX)
-			g.p1.Y = float32(plY)
-			g.p2.X = float32(lX)
-			g.p2.Y = float32(lY)
-			drawList.AddLine(g.p1, g.p2, g.lineColor)
+			p1.X = float32(plX)
+			p1.Y = float32(plY)
+			p2.X = float32(lX)
+			p2.Y = float32(lY)
+			drawList.AddLine(p1, p2, g.lineColor)
 
 			// if model.bug println("vt: ", vt) end
 			plX = lX
@@ -186,8 +180,6 @@ func (g *somaPspGraph) drawData(environment api.IEnvironment, drawList imgui.Dra
 func (g *somaPspGraph) drawHorizontalLines(environment api.IEnvironment, drawList imgui.DrawList) {
 	simMod := environment.Sim()
 	moData, _ := simMod.Data().(*model.SimJSON)
-	canvasSize := imgui.ContentRegionAvail()
-	canvasPos := imgui.CursorScreenPos()
 
 	samples := environment.Samples()
 	somaData := samples.SomaData()
@@ -196,39 +188,13 @@ func (g *somaPspGraph) drawHorizontalLines(environment api.IEnvironment, drawLis
 		// ----------------------------------------------------------------
 		// Threshold line
 		// ----------------------------------------------------------------
-		// The sample value needs to be mapped
-		uY := MapSampleToUnit(moData.Neuron.Threshold, samples.SomaPspMin(), samples.SomaPspMax())
-		// graph space has +Y downward, but the data is oriented as +Y upward
-		// so we flip in unit-space.
-		uY = 1.0 - uY
-
-		wY := MapUnitToWindow(uY, 0.0, float64(canvasSize.Y))
-
-		_, lY := MapWindowToLocal(0.0, wY, canvasPos)
-
-		wBx := MapUnitToWindow(0.0, 0.0, float64(canvasSize.X))
-		wEx := MapUnitToWindow(1.0, 0.0, float64(canvasSize.X))
-		lBx, _ := MapWindowToLocal(wBx, 0.0, canvasPos)
-		lEx, _ := MapWindowToLocal(wEx, 0.0, canvasPos)
-
-		g.p1.X = float32(lBx)
-		g.p1.Y = float32(lY)
-		g.p2.X = float32(lEx)
-		g.p2.Y = float32(lY)
-		drawList.AddLine(g.p1, g.p2, g.thresholdColor)
+		drawHorizontalLine(environment, drawList,
+			moData.Neuron.Threshold, samples.SomaPspMin(), samples.SomaPspMax(), g.thresholdColor)
 
 		// ----------------------------------------------------------------
 		// Zero line
 		// ----------------------------------------------------------------
-		uY = MapSampleToUnit(0.0, samples.SomaPspMin(), samples.SomaPspMax())
-		uY = 1.0 - uY
-		wY = MapUnitToWindow(uY, 0.0, float64(canvasSize.Y))
-		_, lY = MapWindowToLocal(0.0, wY, canvasPos)
-
-		g.p1.X = float32(lBx)
-		g.p1.Y = float32(lY)
-		g.p2.X = float32(lEx)
-		g.p2.Y = float32(lY)
-		drawList.AddLine(g.p1, g.p2, g.zeroColor)
+		drawHorizontalLine(environment, drawList,
+			0.0, samples.SomaPspMin(), samples.SomaPspMax(), g.zeroColor)
 	}
 }

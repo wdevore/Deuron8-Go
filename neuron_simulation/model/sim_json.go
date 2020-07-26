@@ -18,6 +18,7 @@ type SynapseDefaultsJSON struct {
 
 // CompartmentJSON is compartment persisted data
 type CompartmentJSON struct {
+	WeightMin       float64
 	WeightMax       float64
 	ID              int
 	WeightDivisor   float64
@@ -37,9 +38,7 @@ type DendriteJSON struct {
 type NeuronJSON struct {
 	Tao              float64
 	FastSurge        float64
-	WMax             float64
 	TaoJ             float64
-	WMin             float64
 	ID               int
 	TaoS             float64
 	APMax            float64

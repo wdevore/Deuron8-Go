@@ -18,10 +18,8 @@ type synapseWeightsGraph struct {
 	timePos int
 
 	lineColor                imgui.PackedColor
+	zeroColor                imgui.PackedColor
 	verticalMarkerLightColor imgui.PackedColor
-
-	p1 imgui.Vec2
-	p2 imgui.Vec2
 }
 
 // NewSynapseWeightsGraph creates imgui graph
@@ -30,9 +28,7 @@ func NewSynapseWeightsGraph() api.IGraph {
 
 	o.lineColor = imgui.Packed(color.RGBA{R: 255, G: 127, B: 0, A: 255})
 	o.verticalMarkerLightColor = imgui.Packed(color.Gray{Y: 64})
-
-	o.p1 = imgui.Vec2{}
-	o.p2 = imgui.Vec2{}
+	o.zeroColor = imgui.Packed(color.RGBA{R: 200, G: 200, B: 127, A: 255})
 
 	return o
 }
@@ -87,6 +83,7 @@ func (g *synapseWeightsGraph) drawGraph(environment api.IEnvironment) {
 	}
 
 	g.drawData(environment, drawList)
+	g.drawHorizontalLines(environment, drawList)
 }
 
 // -----------------------------------------------------------------------
@@ -121,11 +118,11 @@ func (g *synapseWeightsGraph) drawVerticalMarkers(config api.IModel, drawList im
 		lX, lY := MapWindowToLocal(wX, 0.0, canvasPos)
 
 		// Draw time marker
-		g.p1.X = float32(lX)
-		g.p1.Y = float32(lY)
-		g.p2.X = float32(lX)
-		g.p2.Y = float32(lY) + canvasSize.Y
-		drawList.AddLine(g.p1, g.p2, g.verticalMarkerLightColor)
+		p1.X = float32(lX)
+		p1.Y = float32(lY)
+		p2.X = float32(lX)
+		p2.Y = float32(lY) + canvasSize.Y
+		drawList.AddLine(p1, p2, g.verticalMarkerLightColor)
 
 		timePos++
 	}
@@ -168,15 +165,31 @@ func (g *synapseWeightsGraph) drawData(environment api.IEnvironment, drawList im
 
 			lX, lY := MapWindowToLocal(wX, wY, canvasPos)
 
-			g.p1.X = float32(plX)
-			g.p1.Y = float32(plY)
-			g.p2.X = float32(lX)
-			g.p2.Y = float32(lY)
-			drawList.AddLine(g.p1, g.p2, g.lineColor)
+			p1.X = float32(plX)
+			p1.Y = float32(plY)
+			p2.X = float32(lX)
+			p2.Y = float32(lY)
+			drawList.AddLine(p1, p2, g.lineColor)
 
 			// if model.bug println("vt: ", vt) end
 			plX = lX
 			plY = lY
 		}
+	}
+}
+
+func (g *synapseWeightsGraph) drawHorizontalLines(environment api.IEnvironment, drawList imgui.DrawList) {
+	samples := environment.Samples()
+	synapseData := samples.SynapticData()
+	simMod := environment.Sim().Data().(*model.SimJSON)
+	activeSamples := synapseData[simMod.ActiveSynapse]
+
+	if len(activeSamples) > 0 {
+		// ----------------------------------------------------------------
+		// Zero line
+		// ----------------------------------------------------------------
+		// fmt.Println(samples.SynapseWeightMax())
+		drawHorizontalLine(environment, drawList,
+			0.0, samples.SynapseWeightMin(), samples.SynapseWeightMax(), g.zeroColor)
 	}
 }

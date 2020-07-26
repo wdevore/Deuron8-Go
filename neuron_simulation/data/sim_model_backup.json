@@ -1,5 +1,5 @@
 {
-  "Synapses": 10,
+  "Synapses": 20,
   "ActiveSynapse": 0,
   "PoissonPatternSpread": 50,
   "PercentOfExcititorySynapses": 80,
@@ -11,13 +11,11 @@
   "Neuron": {
     "Tao": 10,
     "FastSurge": 20,
-    "WMax": 10,
     "TaoJ": 20,
-    "WMin": 0,
     "ID": 0,
     "TaoS": 50,
     "APMax": 20,
-    "Threshold": 20,
+    "Threshold": 27,
     "RefractoryPeriod": 3,
     "SlowSurge": 10,
     "Dendrites": {
@@ -27,6 +25,7 @@
       "ID": 0,
       "Compartments": [
         {
+          "WeightMin": -5,
           "WeightMax": 10,
           "ID": 0,
           "WeightDivisor": 2,

@@ -13,7 +13,7 @@
   "DataOutputPath": "/media/RAMDisk/",
   "RangeEnd": 2000,
   "SourceStimulus": "stim_2",
-  "StimulusScaler": 9,
+  "StimulusScaler": 15,
   "Duration": 2000,
   "OutputDendriteAvgFiles": "dendrite_avg_samples_span_",
   "RangeStart": 0,

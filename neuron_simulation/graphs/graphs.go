@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/inkyblackness/imgui-go/v2"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 )
 
 const (
@@ -15,6 +16,11 @@ const (
 	SomaPspPanelHeight    = 200
 	SomaAPFastPanelHeight = 200
 	SomaAPSlowPanelHeight = 200
+)
+
+var (
+	p1 = imgui.Vec2{}
+	p2 = imgui.Vec2{}
 )
 
 // Lerp returns a the value between min and max given t = 0->1
@@ -62,4 +68,34 @@ func ScrollVelocity(scroll float64) float64 {
 		sign = -1.0
 	}
 	return sign * math.Exp(sign*scroll)
+}
+
+func drawHorizontalLine(environment api.IEnvironment, drawList imgui.DrawList,
+	y, min, max float64, color imgui.PackedColor) {
+	canvasSize := imgui.ContentRegionAvail()
+	canvasPos := imgui.CursorScreenPos()
+
+	// ----------------------------------------------------------------
+	// Threshold line
+	// ----------------------------------------------------------------
+	// The sample value needs to be mapped
+	uY := MapSampleToUnit(y, min, max)
+	// graph space has +Y downward, but the data is oriented as +Y upward
+	// so we flip in unit-space.
+	uY = 1.0 - uY
+
+	wY := MapUnitToWindow(uY, 0.0, float64(canvasSize.Y))
+
+	_, lY := MapWindowToLocal(0.0, wY, canvasPos)
+
+	wBx := MapUnitToWindow(0.0, 0.0, float64(canvasSize.X))
+	wEx := MapUnitToWindow(1.0, 0.0, float64(canvasSize.X))
+	lBx, _ := MapWindowToLocal(wBx, 0.0, canvasPos)
+	lEx, _ := MapWindowToLocal(wEx, 0.0, canvasPos)
+
+	p1.X = float32(lBx)
+	p1.Y = float32(lY)
+	p2.X = float32(lEx)
+	p2.Y = float32(lY)
+	drawList.AddLine(p1, p2, color)
 }

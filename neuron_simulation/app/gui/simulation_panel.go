@@ -37,8 +37,8 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 			sim.Changed()
 			fv, err := strconv.ParseInt(textBuffer, 10, 64)
 			if err == nil {
-				fmt.Println("Stim Scaler: ", fv)
-				sim.Changed()
+				fmt.Println("Stimulus Scaler: ", fv)
+				environment.Config().Changed()
 				moData.StimulusScaler = int(fv)
 				// Update all Stimulus streams in the simulator
 				environment.SetParms("StimulusScaler")
@@ -65,22 +65,6 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 			}
 		}
 
-		// imgui.SameLineV(350, 10)
-		// // ----------------------------------------------------------
-		// actSyn = int32(simData.ActiveSynapse)
-		// entered = imgui.InputIntV("Active Synapse", &actSyn, 1, 100,
-		// 	imgui.InputTextFlagsEnterReturnsTrue|imgui.InputTextFlagsCharsDecimal)
-		// if entered {
-		// 	if actSyn < 0 {
-		// 		actSyn = 0
-		// 	} else if actSyn >= int32(simData.Synapses) {
-		// 		actSyn = int32(simData.Synapses) - 1
-		// 	}
-		// 	sim.Changed()
-		// 	fmt.Println("Active Synapse: ", actSyn)
-		// 	simData.ActiveSynapse = int(actSyn)
-		// }
-
 		imgui.PopItemWidth()
 	}
 
@@ -89,6 +73,8 @@ func BuildSimulationPanel(environment api.IEnvironment) {
 	BuildNeuronPanel(environment)
 
 	BuildDendritePanel(environment)
+
+	BuildCompartmentPanel(environment)
 
 	BuildSynapsePanel(environment)
 

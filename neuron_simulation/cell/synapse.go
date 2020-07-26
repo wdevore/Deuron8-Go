@@ -166,6 +166,7 @@ func (s *Synapse) Reset() {
 	// Reset weights back to best guess values.
 	comp := s.simJ.Neuron.Dendrites.Compartments[0]
 	s.wMax = comp.WeightMax
+	s.wMin = comp.WeightMin
 	s.w = s.wMax / comp.WeightDivisor
 }
 

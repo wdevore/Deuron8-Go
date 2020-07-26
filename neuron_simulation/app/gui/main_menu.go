@@ -41,7 +41,6 @@ func BuildMenuBar(environment api.IEnvironment) {
 				sim.Load()
 			}
 			if imgui.MenuItem("Save") {
-				fmt.Println("Saving simulation properties")
 				sim.Save()
 			}
 			imgui.EndMenu()
