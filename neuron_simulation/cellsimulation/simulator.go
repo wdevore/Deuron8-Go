@@ -2,10 +2,14 @@ package cellsimulation
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/cell"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/misc"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/streams"
 )
@@ -136,6 +140,8 @@ func (si *Simulator) Run(ch chan string) {
 				si.running = false
 			case "propertyChange":
 				si.propertyChange(si.environment)
+			case "randomizer":
+				si.randomizer(si.environment)
 			case "killSim":
 				loop = false
 			}
@@ -213,6 +219,21 @@ func (si *Simulator) reset() {
 	}
 
 	si.environment.Samples().Reset()
+}
+
+func (si *Simulator) randomizer(environment api.IEnvironment) {
+	parms := strings.Split(environment.Parms(), ",")
+
+	switch parms[0] {
+	case "Weight":
+		// Use the Min/Max values to bound the Lerp
+		min, _ := strconv.ParseFloat(parms[1], 64)
+		max, _ := strconv.ParseFloat(parms[2], 64)
+		for _, syn := range si.synapses {
+			w := misc.Lerp(min, max, rand.Float64())
+			syn.SetWeight(w)
+		}
+	}
 }
 
 func (si *Simulator) propertyChange(environment api.IEnvironment) {

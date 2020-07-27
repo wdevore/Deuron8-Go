@@ -18,6 +18,8 @@ type ISynapse interface {
 	SetID(int)
 
 	Weight() float64
+	SetWeight(float64)
+
 	Surge() float64
 	Psp() float64
 }

@@ -163,7 +163,6 @@ func (s *Synapse) Reset() {
 	s.psp = 0.0
 	s.preT = 0.0
 
-	// Reset weights back to best guess values.
 	comp := s.simJ.Neuron.Dendrites.Compartments[0]
 	s.wMax = comp.WeightMax
 	s.wMin = comp.WeightMin
@@ -313,6 +312,11 @@ func (s *Synapse) SetID(id int) {
 // Weight ...
 func (s *Synapse) Weight() float64 {
 	return s.w
+}
+
+// SetWeight ...
+func (s *Synapse) SetWeight(w float64) {
+	s.w = w
 }
 
 // Surge ...

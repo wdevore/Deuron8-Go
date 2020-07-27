@@ -5,6 +5,7 @@ import (
 
 	"github.com/inkyblackness/imgui-go/v2"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
+	"github.com/wdevore/Deuron8-Go/neuron_simulation/misc"
 )
 
 const (
@@ -23,35 +24,14 @@ var (
 	p2 = imgui.Vec2{}
 )
 
-// Lerp returns a the value between min and max given t = 0->1
-func Lerp(min, max, t float64) float64 {
-	return min*(1.0-t) + max*t
-}
-
-// Linear returns 0->1 for a "value" between min and max.
-// Generally used to map from view-space to unit-space
-func Linear(min, max, value float64) float64 {
-	if max < min {
-		tmp := max
-		max = min
-		min = tmp
-	}
-
-	if min < 0.0 {
-		return 1.0 - (value-max)/(min-max)
-	}
-
-	return (value - min) / (max - min)
-}
-
 // MapSampleToUnit from sample-space to unit-space where unit-space is 0->1
 func MapSampleToUnit(v, min, max float64) float64 {
-	return Linear(min, max, v)
+	return misc.Linear(min, max, v)
 }
 
 // MapUnitToWindow from unit-space to window-space
 func MapUnitToWindow(v, min, max float64) float64 {
-	return Lerp(min, max, v)
+	return misc.Lerp(min, max, v)
 }
 
 // MapWindowToLocal = graph-space

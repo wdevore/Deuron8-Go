@@ -35,16 +35,30 @@ func BuildMenuBar(environment api.IEnvironment) {
 			}
 			imgui.EndMenu()
 		}
+
+		// ------------------------------------------------------
 		if imgui.BeginMenu("Simulation") {
 			if imgui.MenuItem("Load") {
 				fmt.Println("Loading simulation properties")
 				sim.Load()
 			}
+
 			if imgui.MenuItem("Save") {
 				sim.Save()
 			}
+
+			if imgui.MenuItem("Save Synapses") {
+				environment.Synapses().Save()
+			}
+
+			if imgui.MenuItem("Load Synapses") {
+				environment.Synapses().Load()
+			}
+
 			imgui.EndMenu()
 		}
+
+		// ------------------------------------------------------
 		if imgui.BeginMenu("Settings") {
 			moData, _ := config.Data().(*model.ConfigJSON)
 

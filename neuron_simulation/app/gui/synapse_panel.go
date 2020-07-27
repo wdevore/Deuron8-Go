@@ -18,7 +18,8 @@ var (
 func BuildSynapsePanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Synapse") {
 		sim := environment.Sim()
-		synMod := environment.Synapses().Data().(*model.SynapsesJSON)
+		synIMod := environment.Synapses()
+		synMod := synIMod.Data().(*model.SynapsesJSON)
 
 		simData, _ := sim.Data().(*model.SimJSON)
 		activeSyn = simData.ActiveSynapse
@@ -41,7 +42,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Alpha: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.Alpha = fv
@@ -66,7 +67,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Ama: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.Ama = fv
@@ -91,7 +92,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Amb: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.Amb = fv
@@ -116,7 +117,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Lambda: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.Lambda = fv
@@ -142,7 +143,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Fast Learn Rate: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.LearningRateFast = fv
@@ -168,7 +169,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Slow Learn Rate: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.LearningRateSlow = fv
@@ -193,7 +194,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Mu: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.Mu = fv
@@ -219,7 +220,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("TaoI: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.TaoI = fv
@@ -245,7 +246,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("TaoN: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.TaoN = fv
@@ -270,7 +271,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("TaoP: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.TaoP = fv
@@ -296,7 +297,7 @@ func BuildSynapsePanel(environment api.IEnvironment) {
 			fv, err := strconv.ParseFloat(textBuffer, 64)
 			if err == nil {
 				fmt.Println("Weight: ", fv)
-				sim.Changed()
+				synIMod.Changed()
 				if applyToAll {
 					for _, syn := range synapses {
 						syn.W = fv

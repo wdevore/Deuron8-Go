@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/inkyblackness/imgui-go/v2"
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -12,6 +13,8 @@ import (
 var (
 	duration  = int32(0)
 	timeScale = int32(0)
+	maxValue  = float64(0)
+	minValue  = float64(0)
 )
 
 // BuildGlobalPanel ...
@@ -32,6 +35,7 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 		moData.Duration = int(duration)
 	}
 	imgui.PopItemWidth()
+	// --------------------------------------------------------------------
 
 	imgui.PushItemWidth(100)
 	imgui.SameLineV(100, 100)
@@ -44,6 +48,7 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 		moData.TimeScale = int(timeScale)
 	}
 
+	// --------------------------------------------------------------------
 	rangeStart := int32(moData.RangeStart)
 	rangeEnd := int32(moData.RangeEnd)
 	duration := int32(moData.Duration)
@@ -112,6 +117,60 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 		simData.ActiveSynapse = int(activeSynSlide)
 	}
 	imgui.PopItemWidth()
+
+	// --------------------------------------------------------------------
+	textBuffer = fmt.Sprintf("%0.2f", minValue)
+	entered = imgui.InputTextV(
+		"Min Value", &textBuffer,
+		imgui.InputTextFlagsEnterReturnsTrue|
+			imgui.InputTextFlagsCharsDecimal|
+			imgui.InputTextFlagsCharsNoBlank,
+		nil)
+
+	if entered {
+		fv, err := strconv.ParseFloat(textBuffer, 64)
+		if err == nil {
+			minValue = fv
+		}
+	}
+
+	imgui.SameLine()
+
+	textBuffer = fmt.Sprintf("%0.2f", maxValue)
+	entered = imgui.InputTextV(
+		"Max Value", &textBuffer,
+		imgui.InputTextFlagsEnterReturnsTrue|
+			imgui.InputTextFlagsCharsDecimal|
+			imgui.InputTextFlagsCharsNoBlank,
+		nil)
+
+	if entered {
+		fv, err := strconv.ParseFloat(textBuffer, 64)
+		if err == nil {
+			maxValue = fv
+		}
+	}
+
+	opened := imgui.BeginCombo("Randomizer", "Synapse")
+	if opened {
+		items := []string{
+			"Weights", "TaoP", "TaoN", "TaoI", "Mu",
+			"Distance", "Lambda", "Ama", "Amb",
+			"Alpha", "LearningRateSlow", "LearningRateFast",
+		}
+		currentItem := int32(len(items) + 1) // default to no item selected
+		changed = imgui.ListBox("", &currentItem, items)
+
+		if changed {
+			switch currentItem {
+			case 0: // Weights
+				environment.SetParms(fmt.Sprintf("Weight,%0.3f,%0.3f", minValue, maxValue))
+				environment.IssueCmd("randomizer")
+			}
+		}
+
+		imgui.EndCombo()
+	}
 
 	imgui.End()
 
