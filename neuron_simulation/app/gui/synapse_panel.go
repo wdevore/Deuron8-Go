@@ -18,7 +18,7 @@ var (
 func BuildSynapsePanel(environment api.IEnvironment) {
 	if imgui.CollapsingHeader("Synapse") {
 		sim := environment.Sim()
-		synIMod := environment.Synapses()
+		synIMod := environment.SynapticModel()
 		synMod := synIMod.Data().(*model.SynapsesJSON)
 
 		simData, _ := sim.Data().(*model.SimJSON)

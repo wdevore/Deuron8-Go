@@ -121,10 +121,15 @@ func (s *samples) CollectSynapse(synapse api.ISynapse, id, t int) {
 	s.synapsePspMax = math.Max(s.synapsePspMax, synapse.Psp())
 	s.synapseWeightMin = math.Min(s.synapseWeightMin, synapse.Weight())
 	s.synapseWeightMax = math.Max(s.synapseWeightMax, synapse.Weight())
-
-	// fmt.Printf("(%03d:%03d) W:%0.3f, Sur:%0.3f, Psp:%0.3f, SuMa:%03.f, SuMi:%0.3f, I:%d,\n",
+	// if s.synapseWeightMin == math.NaN() {
+	// 	fmt.Println("oops")
+	// }
+	// if t > 140 && t < 160 {
+	// 	fmt.Printf("(%d)%d:%0.3f:%0.3f ", id, t, s.synapseWeightMin, synapse.Weight())
+	// }
+	// fmt.Printf("(%03d:%03d) W:%0.3f, Sur:%0.3f, Psp:%0.3f, Min:%03.f, Max:%0.3f, I:%d,\n",
 	// 	t, id, synapse.Weight(), synapse.Surge(), synapse.Psp(),
-	// 	s.synapseSurgeMin, s.synapseSurgeMax,
+	// 	s.synapseWeightMin, s.synapseWeightMax,
 	// 	synapse.Input(),
 	// )
 

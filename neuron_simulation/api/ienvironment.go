@@ -4,7 +4,10 @@ package api
 type IEnvironment interface {
 	Config() IModel
 	Sim() IModel
-	Synapses() IModel
+	SynapticModel() IModel
+
+	AddSynapse(ISynapse)
+	Synapses() []ISynapse
 
 	Samples() ISamples
 
@@ -23,4 +26,20 @@ type IEnvironment interface {
 	// can't attempt to access any samples until the simulation is complete.
 	IsRunning() bool
 	Run(bool)
+
+	// Runtime properties
+	RandomizerField() int
+	SetRandomizerField(int)
+
+	MinimumRangeValue() float64
+	SetMinimumRangeValue(float64)
+
+	MaximumRangeValue() float64
+	SetMaximumRangeValue(float64)
+
+	CenterRangeValue() float64
+	SetCenterRangeValue(float64)
+
+	InitialWeightValues() int
+	SetInitialWeightValues(int)
 }

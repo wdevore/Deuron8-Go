@@ -48,11 +48,11 @@ func BuildMenuBar(environment api.IEnvironment) {
 			}
 
 			if imgui.MenuItem("Save Synapses") {
-				environment.Synapses().Save()
+				environment.SynapticModel().Save()
 			}
 
 			if imgui.MenuItem("Load Synapses") {
-				environment.Synapses().Load()
+				environment.SynapticModel().Load()
 			}
 
 			imgui.EndMenu()

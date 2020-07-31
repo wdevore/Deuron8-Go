@@ -7,6 +7,7 @@ type ConfigJSON struct {
 	WindowWidth              int
 	WindowHeight             int
 	Simulation               string
+	SynapticPresets          string
 	OutputSomaAPFastFiles    string
 	DataPath                 string
 	OutputPoissonFiles       string

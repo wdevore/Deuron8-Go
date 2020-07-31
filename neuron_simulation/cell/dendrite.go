@@ -23,7 +23,7 @@ type Dendrite struct {
 	compartments []api.ICompartment
 
 	// Average weight over time
-	average  float64
+	// average  float64
 	synapses int
 }
 
@@ -63,7 +63,7 @@ func (d *Dendrite) Reset() {
 	for _, compartment := range d.compartments {
 		compartment.Reset()
 	}
-	d.average = 0
+	// d.average = 0
 }
 
 // APEfficacy Calc this synapses's reaction to the AP based on its

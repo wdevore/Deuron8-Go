@@ -19,6 +19,7 @@ type synapseWeightsGraph struct {
 
 	lineColor                imgui.PackedColor
 	zeroColor                imgui.PackedColor
+	initialWColor            imgui.PackedColor
 	verticalMarkerLightColor imgui.PackedColor
 }
 
@@ -29,6 +30,7 @@ func NewSynapseWeightsGraph() api.IGraph {
 	o.lineColor = imgui.Packed(color.RGBA{R: 255, G: 127, B: 0, A: 255})
 	o.verticalMarkerLightColor = imgui.Packed(color.Gray{Y: 64})
 	o.zeroColor = imgui.Packed(color.RGBA{R: 200, G: 200, B: 127, A: 255})
+	o.initialWColor = imgui.Packed(color.RGBA{R: 127, G: 127, B: 200, A: 255})
 
 	return o
 }
@@ -171,7 +173,6 @@ func (g *synapseWeightsGraph) drawData(environment api.IEnvironment, drawList im
 			p2.Y = float32(lY)
 			drawList.AddLine(p1, p2, g.lineColor)
 
-			// if model.bug println("vt: ", vt) end
 			plX = lX
 			plY = lY
 		}
@@ -188,8 +189,17 @@ func (g *synapseWeightsGraph) drawHorizontalLines(environment api.IEnvironment, 
 		// ----------------------------------------------------------------
 		// Zero line
 		// ----------------------------------------------------------------
-		// fmt.Println(samples.SynapseWeightMax())
 		drawHorizontalLine(environment, drawList,
 			0.0, samples.SynapseWeightMin(), samples.SynapseWeightMax(), g.zeroColor)
+	}
+
+	// ----------------------------------------------------------------
+	// Initial weight line
+	// ----------------------------------------------------------------
+	synapses := environment.Synapses()
+	if len(synapses) > 0 {
+		drawHorizontalLine(environment, drawList,
+			synapses[simMod.ActiveSynapse].InitialWeight(),
+			samples.SynapseWeightMin(), samples.SynapseWeightMax(), g.initialWColor)
 	}
 }

@@ -10,11 +10,17 @@ import (
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/model"
 )
 
+const (
+	synapsePresets = 0
+	synapseCurrent = 1
+	synapseRandom  = 2
+)
+
 var (
 	duration  = int32(0)
 	timeScale = int32(0)
-	maxValue  = float64(0)
-	minValue  = float64(0)
+
+	synapseInitialValueType int
 )
 
 // BuildGlobalPanel ...
@@ -118,8 +124,10 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	}
 	imgui.PopItemWidth()
 
+	imgui.PushItemWidth(50)
+
 	// --------------------------------------------------------------------
-	textBuffer = fmt.Sprintf("%0.2f", minValue)
+	textBuffer = fmt.Sprintf("%0.2f", environment.MinimumRangeValue())
 	entered = imgui.InputTextV(
 		"Min Value", &textBuffer,
 		imgui.InputTextFlagsEnterReturnsTrue|
@@ -130,13 +138,14 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	if entered {
 		fv, err := strconv.ParseFloat(textBuffer, 64)
 		if err == nil {
-			minValue = fv
+			environment.SetMinimumRangeValue(fv)
 		}
 	}
 
 	imgui.SameLine()
 
-	textBuffer = fmt.Sprintf("%0.2f", maxValue)
+	// --------------------------------------------------------------------
+	textBuffer = fmt.Sprintf("%0.2f", environment.MaximumRangeValue())
 	entered = imgui.InputTextV(
 		"Max Value", &textBuffer,
 		imgui.InputTextFlagsEnterReturnsTrue|
@@ -147,10 +156,29 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	if entered {
 		fv, err := strconv.ParseFloat(textBuffer, 64)
 		if err == nil {
-			maxValue = fv
+			environment.SetMaximumRangeValue(fv)
 		}
 	}
 
+	imgui.SameLine()
+	// --------------------------------------------------------------------
+	textBuffer = fmt.Sprintf("%0.2f", environment.CenterRangeValue())
+	entered = imgui.InputTextV(
+		"Center Value", &textBuffer,
+		imgui.InputTextFlagsEnterReturnsTrue|
+			imgui.InputTextFlagsCharsDecimal|
+			imgui.InputTextFlagsCharsNoBlank,
+		nil)
+
+	if entered {
+		fv, err := strconv.ParseFloat(textBuffer, 64)
+		if err == nil {
+			environment.SetCenterRangeValue(fv)
+		}
+	}
+	imgui.PopItemWidth()
+
+	// --------------------------------------------------------------------
 	opened := imgui.BeginCombo("Randomizer", "Synapse")
 	if opened {
 		items := []string{
@@ -159,17 +187,41 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 			"Alpha", "LearningRateSlow", "LearningRateFast",
 		}
 		currentItem := int32(len(items) + 1) // default to no item selected
+		// currentItem := int32(0) // default to Weights
 		changed = imgui.ListBox("", &currentItem, items)
 
 		if changed {
 			switch currentItem {
 			case 0: // Weights
-				environment.SetParms(fmt.Sprintf("Weight,%0.3f,%0.3f", minValue, maxValue))
-				environment.IssueCmd("randomizer")
+				environment.SetRandomizerField(int(currentItem))
+				// environment.SetParms(fmt.Sprintf("Weight,%0.3f,%0.3f", minValue, maxValue))
+				// environment.IssueCmd("randomizer")
 			}
 		}
 
 		imgui.EndCombo()
+	}
+
+	pressed := imgui.RadioButton("Presets", synapseInitialValueType == synapsePresets)
+	if pressed {
+		synapseInitialValueType = synapsePresets
+		environment.SetInitialWeightValues(synapsePresets)
+	}
+
+	imgui.SameLine()
+
+	pressed = imgui.RadioButton("Current", synapseInitialValueType == synapseCurrent)
+	if pressed {
+		synapseInitialValueType = synapseCurrent
+		environment.SetInitialWeightValues(synapseCurrent)
+	}
+
+	imgui.SameLine()
+
+	pressed = imgui.RadioButton("Random", synapseInitialValueType == synapseRandom)
+	if pressed {
+		synapseInitialValueType = synapseRandom
+		environment.SetInitialWeightValues(synapseRandom)
 	}
 
 	imgui.End()

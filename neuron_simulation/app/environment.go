@@ -17,6 +17,8 @@ type environmentS struct {
 	synapsesPersist api.IModel
 
 	samples api.ISamples
+	// Synapses
+	synapses []api.ISynapse
 
 	stimulus          [][]int
 	expandedStimulus  [][]int
@@ -30,6 +32,12 @@ type environmentS struct {
 	params  string
 
 	simRunning bool
+
+	// Runtime properties
+	randomizerChoice             int // Global panel
+	initialWeightValues          int // Global panel
+	minRangeValue, maxRangeValue float64
+	centerRangeValue             float64
 }
 
 // NewEnvironment ...
@@ -38,9 +46,14 @@ func NewEnvironment(relativePath, basePath string) api.IEnvironment {
 	o.relativePath = relativePath
 	o.basePath = basePath
 
+	o.minRangeValue = 5.0
+	o.maxRangeValue = 10.0
+
+	// load config.json
 	o.loadProperties()
 
-	o.loadSynapses()
+	config := o.config.Data().(*model.ConfigJSON)
+	o.loadSynapses(config.SynapticPresets) // Ex: "synapses.json"
 
 	o.samples = datasamples.NewSamples()
 
@@ -156,8 +169,8 @@ func (e *environmentS) loadProperties() {
 	}
 }
 
-func (e *environmentS) loadSynapses() {
-	e.synapsesPersist = model.NewSynapsePersist(e.relativePath, e.basePath+"synapses.json")
+func (e *environmentS) loadSynapses(file string) {
+	e.synapsesPersist = model.NewSynapsePersist(e.relativePath, e.basePath+file)
 
 	_, ok := e.synapsesPersist.Data().(*model.SynapsesJSON)
 
@@ -176,8 +189,16 @@ func (e *environmentS) Sim() api.IModel {
 	return e.sim
 }
 
-func (e *environmentS) Synapses() api.IModel {
+func (e *environmentS) SynapticModel() api.IModel {
 	return e.synapsesPersist
+}
+
+func (e *environmentS) AddSynapse(synapse api.ISynapse) {
+	e.synapses = append(e.synapses, synapse)
+}
+
+func (e *environmentS) Synapses() []api.ISynapse {
+	return e.synapses
 }
 
 func (e *environmentS) Samples() api.ISamples {
@@ -241,4 +262,48 @@ func (e *environmentS) Parms() string {
 
 func (e *environmentS) SetParms(parms string) {
 	e.params = parms
+}
+
+// -------------------------------------------------------------
+// Runtime properties
+// -------------------------------------------------------------
+
+func (e *environmentS) RandomizerField() int {
+	return e.randomizerChoice
+}
+
+func (e *environmentS) SetRandomizerField(v int) {
+	e.randomizerChoice = v
+}
+
+func (e *environmentS) InitialWeightValues() int {
+	return e.initialWeightValues
+}
+
+func (e *environmentS) SetInitialWeightValues(v int) {
+	e.initialWeightValues = v
+}
+
+func (e *environmentS) MinimumRangeValue() float64 {
+	return e.minRangeValue
+}
+
+func (e *environmentS) SetMinimumRangeValue(v float64) {
+	e.minRangeValue = v
+}
+
+func (e *environmentS) MaximumRangeValue() float64 {
+	return e.maxRangeValue
+}
+
+func (e *environmentS) SetMaximumRangeValue(v float64) {
+	e.maxRangeValue = v
+}
+
+func (e *environmentS) CenterRangeValue() float64 {
+	return e.centerRangeValue
+}
+
+func (e *environmentS) SetCenterRangeValue(v float64) {
+	e.centerRangeValue = v
 }

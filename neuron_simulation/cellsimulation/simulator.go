@@ -3,8 +3,6 @@ package cellsimulation
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -23,9 +21,6 @@ type Simulator struct {
 
 	// Stimulus
 	stimuli []api.IBitStream
-
-	// Synapses
-	synapses []api.ISynapse
 
 	neuron api.ICell
 	t      int
@@ -80,14 +75,15 @@ func (si *Simulator) Build() {
 	soma.SetAxon(axon)
 
 	genSynID := 0
+
 	// We need a synapse for each stream, both Noise and Stimulus
 	for _, stimulus := range si.stimuli {
 		synapse := cell.NewSynapse(si.environment,
 			soma, dendrite, compartment, genSynID)
 		// route noise to synapse
 		synapse.SetStream(stimulus)
-		synapse.Initialize(false)
-		si.synapses = append(si.synapses, synapse)
+		synapse.Initialize()
+		si.environment.AddSynapse(synapse)
 		genSynID++
 	}
 
@@ -96,8 +92,8 @@ func (si *Simulator) Build() {
 			soma, dendrite, compartment, genSynID)
 		// route noise to synapse
 		synapse.SetStream(noise)
-		synapse.Initialize(true)
-		si.synapses = append(si.synapses, synapse)
+		synapse.Initialize()
+		si.environment.AddSynapse(synapse)
 		genSynID++
 	}
 
@@ -140,8 +136,6 @@ func (si *Simulator) Run(ch chan string) {
 				si.running = false
 			case "propertyChange":
 				si.propertyChange(si.environment)
-			case "randomizer":
-				si.randomizer(si.environment)
 			case "killSim":
 				loop = false
 			}
@@ -219,26 +213,81 @@ func (si *Simulator) reset() {
 	}
 
 	si.environment.Samples().Reset()
-}
 
-func (si *Simulator) randomizer(environment api.IEnvironment) {
-	parms := strings.Split(environment.Parms(), ",")
+	// Set initial values for each synapse: Presets, Current or Random?
+	switch si.environment.InitialWeightValues() {
+	case 0: // Presets
+		si.synapsePresets()
+	case 2: // Random
+		si.synapseWeightRandomizer()
+	}
 
-	switch parms[0] {
-	case "Weight":
-		// Use the Min/Max values to bound the Lerp
-		min, _ := strconv.ParseFloat(parms[1], 64)
-		max, _ := strconv.ParseFloat(parms[2], 64)
-		for _, syn := range si.synapses {
-			w := misc.Lerp(min, max, rand.Float64())
-			syn.SetWeight(w)
+	if si.environment.InitialWeightValues() != 1 {
+		// Now transfer model to synapses
+		for _, syn := range si.environment.Synapses() {
+			syn.Initialize()
 		}
 	}
+
+}
+
+func (si *Simulator) synapsePresets() {
+	si.environment.SynapticModel().Load()
+
+	synsJ, _ := si.environment.SynapticModel().Data().(*model.SynapsesJSON)
+
+	simMod, _ := si.environment.Sim().Data().(*model.SimJSON)
+	defs := simMod.Neuron.Dendrites.Compartments[0].SynapseDefaults
+
+	// Modify the model to reflect source
+	for _, syn := range synsJ.Synapses {
+		syn.TaoP = defs.TaoP
+		syn.TaoN = defs.TaoN
+		syn.Mu = defs.Mu
+		syn.Distance = defs.Distance
+		syn.Lambda = defs.Lambda
+		syn.Amb = defs.Amb
+		syn.W = defs.W
+		syn.Alpha = defs.Alpha
+		syn.LearningRateSlow = defs.LearningRateSlow
+		syn.LearningRateFast = defs.LearningRateFast
+		syn.TaoI = defs.TaoI
+		syn.Ama = defs.Ama
+	}
+
+}
+
+func (si *Simulator) synapseWeightRandomizer() {
+	// parms := strings.Split(si.environment.Parms(), ",")
+
+	// switch parms[0] {
+	// case "Weight":
+	synapses, _ := si.environment.SynapticModel().Data().(*model.SynapsesJSON)
+
+	// Use the Min/Max values to bound the Lerp
+	min := si.environment.MinimumRangeValue()
+	max := si.environment.MaximumRangeValue()
+	center := si.environment.CenterRangeValue()
+
+	for _, syn := range synapses.Synapses {
+		l := misc.Linear(min, max, center)
+		r := rand.Float64()
+
+		if r > l {
+			// Center -> Max wins
+			syn.W = misc.Lerp(center, max, rand.Float64())
+			continue
+		}
+
+		// Min -> Center wins
+		syn.W = misc.Lerp(min, center, rand.Float64())
+	}
+	// }
+
 }
 
 func (si *Simulator) propertyChange(environment api.IEnvironment) {
 	simMod := environment.Sim()
-	// conMod := environment.Config()
 
 	switch environment.Parms() {
 	case "PoissonLambda":
@@ -255,7 +304,7 @@ func (si *Simulator) propertyChange(environment api.IEnvironment) {
 		// We need to reassign the same stream to the same synapse.
 		for i, bitstream := range environment.Stimulus() {
 			// Rebind all patterns to each stimulus stream
-			synapse := si.synapses[i]
+			synapse := si.environment.Synapses()[i]
 			stim := streams.NewStimulusStream(bitstream, siData.Hertz)
 			synapse.SetStream(stim)
 			si.stimuli = append(si.stimuli, stim)
