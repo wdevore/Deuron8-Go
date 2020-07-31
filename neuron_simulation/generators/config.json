@@ -1,0 +1,79 @@
+{
+  "OutputFile": "/synapse_preset_1.json",
+  "TargetPath": "../data/",
+  "SynapseCount": 20,
+  "Presets": {
+    "TaoP": {
+      "Enabled": false,
+      "Center": 20,
+      "Min": 15,
+      "Max": 25
+    },
+    "TaoN": {
+      "Enabled": false,
+      "Center": 30,
+      "Min": 25,
+      "Max": 35
+    },
+    "Mu": {
+      "Enabled": false,
+      "Center": 0.5,
+      "Min": 0.45,
+      "Max": 0.55
+    },
+    "Distance": {
+      "Enabled": false,
+      "Center": 1,
+      "Min": 0.5,
+      "Max": 1.5
+    },
+    "Lambda": {
+      "Enabled": false,
+      "Center": 1,
+      "Min": 0.9,
+      "Max": 1.1
+    },
+    "Amb": {
+      "Enabled": false,
+      "Center": 10,
+      "Min": 5,
+      "Max": 15
+    },
+    "W": {
+      "Enabled": true,
+      "Center": 0,
+      "Min": -1,
+      "Max": 7
+    },
+    "Alpha": {
+      "Enabled": false,
+      "Center": 1,
+      "Min": 0.9,
+      "Max": 1.1
+    },
+    "LearningRateSlow": {
+      "Enabled": false,
+      "Center": 0.2,
+      "Min": 0.19,
+      "Max": 0.21
+    },
+    "LearningRateFast": {
+      "Enabled": false,
+      "Center": 0.3,
+      "Min": 0.29,
+      "Max": 0.31
+    },
+    "TaoI": {
+      "Enabled": false,
+      "Center": 10,
+      "Min": 9,
+      "Max": 11
+    },
+    "Ama": {
+      "Enabled": false,
+      "Center": 1,
+      "Min": 0.9,
+      "Max": 1.1
+    }
+  }
+}
