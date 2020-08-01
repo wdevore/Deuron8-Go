@@ -15,7 +15,7 @@
     "ID": 0,
     "TaoS": 50,
     "APMax": 20,
-    "Threshold": 10,
+    "Threshold": 20,
     "RefractoryPeriod": 3,
     "SlowSurge": 10,
     "Dendrites": {

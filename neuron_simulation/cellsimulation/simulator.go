@@ -42,6 +42,7 @@ func (si *Simulator) Build() {
 	siData, _ := simMod.Data().(*model.SimJSON)
 	moData, _ := si.environment.Config().Data().(*model.ConfigJSON)
 
+	// -----------------------------------------------------------------
 	// First we create the Noise (Poisson) streams. Each stream will
 	// be routed to a unique synapse. We need a collection of them so
 	// we can exercise them on each simulation step.
@@ -53,6 +54,7 @@ func (si *Simulator) Build() {
 	}
 	fmt.Println("Poisson Noise streams created")
 
+	// -----------------------------------------------------------------
 	// Now create the stimulus streams
 	for i := 0; i < si.environment.StimulusCount(); i++ {
 		stimAry := si.environment.StimulusAt(i)
@@ -64,6 +66,7 @@ func (si *Simulator) Build() {
 
 	samples := si.environment.Samples()
 
+	// -----------------------------------------------------------------
 	// Create cell dependencies starting with soma first.
 	soma := cell.NewSoma(simMod, samples)
 
@@ -76,6 +79,7 @@ func (si *Simulator) Build() {
 
 	genSynID := 0
 
+	// -----------------------------------------------------------------
 	// We need a synapse for each stream, both Noise and Stimulus
 	for _, stimulus := range si.stimuli {
 		synapse := cell.NewSynapse(si.environment,
@@ -87,6 +91,7 @@ func (si *Simulator) Build() {
 		genSynID++
 	}
 
+	// -----------------------------------------------------------------
 	for _, noise := range si.noises {
 		synapse := cell.NewSynapse(si.environment,
 			soma, dendrite, compartment, genSynID)
@@ -97,6 +102,7 @@ func (si *Simulator) Build() {
 		genSynID++
 	}
 
+	// -----------------------------------------------------------------
 	// Now create the single Neuron that this simulation execises
 	si.neuron = cell.NewCell(simMod, soma)
 	si.neuron.Initialize()
@@ -111,7 +117,6 @@ func (si *Simulator) Run(ch chan string) {
 	started := false
 
 	moData, _ := si.environment.Config().Data().(*model.ConfigJSON)
-	duration := moData.Duration
 
 	for loop {
 		select {
@@ -140,21 +145,15 @@ func (si *Simulator) Run(ch chan string) {
 				loop = false
 			}
 		default:
+			duration := moData.Duration
 			if si.running {
 				// Running means running completely through a simulation
 				// for the specified duration (in milliseconds).
 				complete := si.simulate(si.t, duration)
 				if complete {
-					// synData := si.environment.Samples().SynapseData(10)
-					// for _, syn := range synData {
-					// 	if syn.Input() == 1 {
-					// 		fmt.Printf("(%d) inp: %d\n", syn.Input(), syn.T())
-					// 	}
-					// }
-					// si.reset()
 					si.running = false
 					si.environment.Run(si.running)
-					fmt.Println("Simulation finished")
+					fmt.Println("Simulation finished for duration of: ", duration)
 				}
 				si.t++
 			} else if si.step {
@@ -309,5 +308,7 @@ func (si *Simulator) propertyChange(environment api.IEnvironment) {
 			synapse.SetStream(stim)
 			si.stimuli = append(si.stimuli, stim)
 		}
+	case "Duration":
+		// Currently not used
 	}
 }

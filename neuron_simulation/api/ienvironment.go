@@ -1,5 +1,10 @@
 package api
 
+const (
+	WeightBoundingHard = 0
+	WeightBoundingSoft = 1
+)
+
 // IEnvironment is the runtime environment
 type IEnvironment interface {
 	Config() IModel
@@ -42,4 +47,7 @@ type IEnvironment interface {
 
 	InitialWeightValues() int
 	SetInitialWeightValues(int)
+
+	WeightBounding() int
+	SetWeightBounding(int)
 }

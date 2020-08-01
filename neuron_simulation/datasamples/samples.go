@@ -1,6 +1,7 @@
 package datasamples
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/wdevore/Deuron8-Go/neuron_simulation/api"
@@ -91,6 +92,7 @@ func NewSamples() api.ISamples {
 }
 
 func (s *samples) Reset() {
+	fmt.Println("Samples resetting.")
 	s.synData = make([][]api.ISynapseSample, maxSynapses)
 	s.somaData = []api.ISomaSample{}
 

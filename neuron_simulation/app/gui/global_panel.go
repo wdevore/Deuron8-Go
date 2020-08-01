@@ -21,11 +21,12 @@ var (
 	timeScale = int32(0)
 
 	synapseInitialValueType int
+	weightBounding          int
 )
 
 // BuildGlobalPanel ...
 func BuildGlobalPanel(environment api.IEnvironment) {
-	imgui.SetNextWindowPos(imgui.Vec2{X: 715, Y: 20.0})
+	imgui.SetNextWindowPos(imgui.Vec2{X: 700, Y: 20.0})
 
 	imgui.Begin("Global Panel")
 	config := environment.Config()
@@ -39,6 +40,8 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 		config.Changed()
 		fmt.Println("Duration: ", duration)
 		moData.Duration = int(duration)
+		environment.SetParms("Duration")
+		environment.IssueCmd("propertyChange")
 	}
 	imgui.PopItemWidth()
 	// --------------------------------------------------------------------
@@ -55,6 +58,8 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	}
 
 	// --------------------------------------------------------------------
+	imgui.Separator()
+
 	rangeStart := int32(moData.RangeStart)
 	rangeEnd := int32(moData.RangeEnd)
 	duration := int32(moData.Duration)
@@ -127,6 +132,8 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	imgui.PushItemWidth(50)
 
 	// --------------------------------------------------------------------
+	imgui.Separator()
+
 	textBuffer = fmt.Sprintf("%0.2f", environment.MinimumRangeValue())
 	entered = imgui.InputTextV(
 		"Min Value", &textBuffer,
@@ -222,6 +229,57 @@ func BuildGlobalPanel(environment api.IEnvironment) {
 	if pressed {
 		synapseInitialValueType = synapseRandom
 		environment.SetInitialWeightValues(synapseRandom)
+	}
+
+	// --------------------------------------------------------------------
+	imgui.Separator()
+
+	pressed = imgui.RadioButton("Hard-bounds", weightBounding == api.WeightBoundingHard)
+	if pressed {
+		weightBounding = api.WeightBoundingHard
+		environment.SetWeightBounding(weightBounding)
+	}
+
+	imgui.SameLine()
+
+	pressed = imgui.RadioButton("Soft-bounds", weightBounding == api.WeightBoundingSoft)
+	if pressed {
+		weightBounding = api.WeightBoundingSoft
+		environment.SetWeightBounding(weightBounding)
+	}
+
+	textBuffer = fmt.Sprintf("%0.2f", moData.SoftAcceleration)
+	entered = imgui.InputTextV(
+		"Soft Acceleration", &textBuffer,
+		imgui.InputTextFlagsEnterReturnsTrue|
+			imgui.InputTextFlagsCharsDecimal|
+			imgui.InputTextFlagsCharsNoBlank,
+		nil)
+
+	if entered {
+		fv, err := strconv.ParseFloat(textBuffer, 64)
+		if err == nil {
+			config.Changed()
+			moData.SoftAcceleration = fv
+		}
+	}
+
+	imgui.SameLine()
+
+	textBuffer = fmt.Sprintf("%0.2f", moData.SoftCurve)
+	entered = imgui.InputTextV(
+		"Soft Curve", &textBuffer,
+		imgui.InputTextFlagsEnterReturnsTrue|
+			imgui.InputTextFlagsCharsDecimal|
+			imgui.InputTextFlagsCharsNoBlank,
+		nil)
+
+	if entered {
+		fv, err := strconv.ParseFloat(textBuffer, 64)
+		if err == nil {
+			config.Changed()
+			moData.SoftCurve = fv
+		}
 	}
 
 	imgui.End()

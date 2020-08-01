@@ -259,6 +259,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 	// Finally update the weight.
 	if updateWeight {
 		newW := s.w + dwP - dwD
+
 		switch s.environment.WeightBounding() {
 		case api.WeightBoundingHard:
 			s.w = math.Max(math.Min(newW, s.wMax), s.wMin)

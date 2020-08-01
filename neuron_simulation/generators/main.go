@@ -26,18 +26,18 @@ func main() {
 		syn := model.SynapseJSON{}
 
 		syn.ID = i
-		syn.TaoP = calcV(&d.TaoP)
-		syn.TaoN = calcV(&d.TaoN)
-		syn.Mu = calcV(&d.Mu)
-		syn.Distance = calcV(&d.Distance)
-		syn.Lambda = calcV(&d.Lambda)
-		syn.Amb = calcV(&d.Amb)
-		syn.W = calcV(&d.W)
-		syn.Alpha = calcV(&d.Alpha)
-		syn.LearningRateSlow = calcV(&d.LearningRateSlow)
-		syn.LearningRateFast = calcV(&d.LearningRateFast)
-		syn.TaoI = calcV(&d.TaoI)
-		syn.Ama = calcV(&d.Ama)
+		_, syn.TaoP = calcV(&d.TaoP)
+		_, syn.TaoN = calcV(&d.TaoN)
+		_, syn.Mu = calcV(&d.Mu)
+		_, syn.Distance = calcV(&d.Distance)
+		_, syn.Lambda = calcV(&d.Lambda)
+		_, syn.Amb = calcV(&d.Amb)
+		syn.Excititory, syn.W = calcV(&d.W)
+		_, syn.Alpha = calcV(&d.Alpha)
+		_, syn.LearningRateSlow = calcV(&d.LearningRateSlow)
+		_, syn.LearningRateFast = calcV(&d.LearningRateFast)
+		_, syn.TaoI = calcV(&d.TaoI)
+		_, syn.Ama = calcV(&d.Ama)
 
 		mod.Synapses = append(mod.Synapses, &syn)
 	}
@@ -61,19 +61,19 @@ func main() {
 
 }
 
-func calcV(preset *Preset) float64 {
+func calcV(preset *Preset) (bool, float64) {
 	if preset.Enabled {
 		l := misc.Linear(preset.Min, preset.Max, preset.Center)
 		r := rand.Float64()
 
 		if r > l {
 			// Center -> Max wins
-			return misc.Lerp(preset.Center, preset.Max, rand.Float64())
+			return true, misc.Lerp(preset.Center, preset.Max, rand.Float64())
 		}
 
 		// Min -> Center wins
-		return misc.Lerp(preset.Min, preset.Center, rand.Float64())
+		return false, misc.Lerp(preset.Min, preset.Center, rand.Float64())
 	}
 
-	return preset.Center
+	return true, preset.Center
 }

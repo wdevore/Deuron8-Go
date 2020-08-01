@@ -19,6 +19,8 @@ type ConfigJSON struct {
 	SourceStimulus           string
 	StimulusScaler           int
 	Duration                 int
+	SoftAcceleration         float64
+	SoftCurve                float64
 	OutputDendriteAvgFiles   string
 	RangeStart               int
 	OutputSynapseWeightFiles string

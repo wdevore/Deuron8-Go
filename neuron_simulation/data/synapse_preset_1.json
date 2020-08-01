@@ -1,6 +1,7 @@
 {
   "Synapses": [
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -8,7 +9,7 @@
       "ID": 0,
       "Lambda": 1,
       "Amb": 10,
-      "W": 6.583563616315087,
+      "W": 7.5240727043600995,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -16,6 +17,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -23,7 +25,7 @@
       "ID": 1,
       "Lambda": 1,
       "Amb": 10,
-      "W": 3.063999310308861,
+      "W": 3.5017134974958415,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -31,6 +33,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -38,7 +41,7 @@
       "ID": 2,
       "Lambda": 1,
       "Amb": 10,
-      "W": 4.807761510069766,
+      "W": 5.494584582936875,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -46,6 +49,7 @@
       "Ama": 1
     },
     {
+      "Excititory": false,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -53,7 +57,7 @@
       "ID": 3,
       "Lambda": 1,
       "Amb": 10,
-      "W": -0.8434807452672087,
+      "W": -1.6869614905344175,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -61,6 +65,7 @@
       "Ama": 1
     },
     {
+      "Excititory": false,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -68,7 +73,7 @@
       "ID": 4,
       "Lambda": 1,
       "Amb": 10,
-      "W": -0.6990881394147129,
+      "W": -1.3981762788294259,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -76,6 +81,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -83,7 +89,7 @@
       "ID": 5,
       "Lambda": 1,
       "Amb": 10,
-      "W": 5.695479726930678,
+      "W": 6.509119687920775,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -91,6 +97,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -98,7 +105,7 @@
       "ID": 6,
       "Lambda": 1,
       "Amb": 10,
-      "W": 2.664600325097802,
+      "W": 3.045257514397488,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -106,6 +113,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -113,7 +121,7 @@
       "ID": 7,
       "Lambda": 1,
       "Amb": 10,
-      "W": 3.2822289143169625,
+      "W": 3.7511187592193855,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -121,6 +129,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -128,7 +137,7 @@
       "ID": 8,
       "Lambda": 1,
       "Amb": 10,
-      "W": 2.0517130013577103,
+      "W": 2.344814858694526,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -136,6 +145,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -143,7 +153,7 @@
       "ID": 9,
       "Lambda": 1,
       "Amb": 10,
-      "W": 1.5298713681493499,
+      "W": 1.7484244207421142,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -151,6 +161,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -158,7 +169,7 @@
       "ID": 10,
       "Lambda": 1,
       "Amb": 10,
-      "W": 2.526099917998342,
+      "W": 2.886971334855248,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -166,6 +177,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -173,7 +185,7 @@
       "ID": 11,
       "Lambda": 1,
       "Amb": 10,
-      "W": 6.037440062135205,
+      "W": 6.899931499583091,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -181,6 +193,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -188,7 +201,7 @@
       "ID": 12,
       "Lambda": 1,
       "Amb": 10,
-      "W": 2.079577944894041,
+      "W": 2.3766605084503323,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -196,6 +209,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -203,7 +217,7 @@
       "ID": 13,
       "Lambda": 1,
       "Amb": 10,
-      "W": 1.4460786333958902,
+      "W": 1.6526612953095887,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -211,6 +225,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -218,7 +233,7 @@
       "ID": 14,
       "Lambda": 1,
       "Amb": 10,
-      "W": 4.877034160226443,
+      "W": 5.573753325973078,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -226,6 +241,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -233,7 +249,7 @@
       "ID": 15,
       "Lambda": 1,
       "Amb": 10,
-      "W": 0.19812158328122997,
+      "W": 0.22642466660711996,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -241,6 +257,7 @@
       "Ama": 1
     },
     {
+      "Excititory": false,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -248,7 +265,7 @@
       "ID": 16,
       "Lambda": 1,
       "Amb": 10,
-      "W": 4.250774076818607,
+      "W": -0.7854931209089693,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -256,6 +273,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -263,7 +281,7 @@
       "ID": 17,
       "Lambda": 1,
       "Amb": 10,
-      "W": 0.5561753636171038,
+      "W": 0.6356289869909758,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -271,6 +289,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -278,7 +297,7 @@
       "ID": 18,
       "Lambda": 1,
       "Amb": 10,
-      "W": 0.41384455919712704,
+      "W": 0.4729652105110023,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,
@@ -286,6 +305,7 @@
       "Ama": 1
     },
     {
+      "Excititory": true,
       "TaoP": 20,
       "TaoN": 30,
       "Mu": 0.5,
@@ -293,7 +313,7 @@
       "ID": 19,
       "Lambda": 1,
       "Amb": 10,
-      "W": 2.11065876704592,
+      "W": 2.41218144805248,
       "Alpha": 1,
       "LearningRateSlow": 0.2,
       "LearningRateFast": 0.3,

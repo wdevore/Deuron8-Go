@@ -38,6 +38,11 @@ type environmentS struct {
 	initialWeightValues          int // Global panel
 	minRangeValue, maxRangeValue float64
 	centerRangeValue             float64
+
+	// Hard or Soft
+	weightBounding   int
+	softAcceleration float64
+	softCurve        float64 // 1.0 = linear, 2.0 = parabola
 }
 
 // NewEnvironment ...
@@ -306,4 +311,12 @@ func (e *environmentS) CenterRangeValue() float64 {
 
 func (e *environmentS) SetCenterRangeValue(v float64) {
 	e.centerRangeValue = v
+}
+
+func (e *environmentS) WeightBounding() int {
+	return e.weightBounding
+}
+
+func (e *environmentS) SetWeightBounding(v int) {
+	e.weightBounding = v
 }

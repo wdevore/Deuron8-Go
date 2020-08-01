@@ -2,6 +2,7 @@ package model
 
 // SynapseJSON is synapse persisted data
 type SynapseJSON struct {
+	Excititory       bool
 	TaoP             float64
 	TaoN             float64
 	Mu               float64
