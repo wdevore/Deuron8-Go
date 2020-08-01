@@ -19,6 +19,7 @@ type Synapse struct {
 
 	simJ     *model.SimJSON
 	synsJ    *model.SynapsesJSON
+	config   *model.ConfigJSON
 	simModel api.IModel
 	samples  api.ISamples
 
@@ -103,7 +104,7 @@ func NewSynapse(environment api.IEnvironment,
 	o.soma = soma
 	o.dendrite = dendrite
 	o.compartment = compartment
-	o.excititory = true // default to excite type
+	// o.excititory = true // default to excite type
 	o.preT = initialPreT
 	o.id = id
 
@@ -120,6 +121,14 @@ func NewSynapse(environment api.IEnvironment,
 		panic("Synapse: can't cast simModel to model.SynapsesJSON")
 	}
 
+	config := environment.Config()
+
+	o.config, ok = config.Data().(*model.ConfigJSON)
+
+	if !ok {
+		panic("Synapse: can't cast data to model.ConfigJSON")
+	}
+
 	compartment.AddSynapse(o)
 
 	return o
@@ -129,6 +138,7 @@ func NewSynapse(environment api.IEnvironment,
 func (s *Synapse) Initialize() {
 	syn := s.synsJ.Synapses[s.id]
 
+	s.mod.Excititory = syn.Excititory
 	s.mod.TaoP = syn.TaoP
 	s.mod.TaoN = syn.TaoN
 	s.mod.Mu = syn.Mu
@@ -144,6 +154,7 @@ func (s *Synapse) Initialize() {
 
 	s.initialW = s.mod.W
 	s.w = s.mod.W
+	s.excititory = s.mod.Excititory
 
 	// Calc this synapses's reaction to the AP based on its
 	// distance from the soma.
@@ -212,7 +223,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		}
 
 		// #######################################
-		// Depression LTD
+		// Depression LTD. This may not be correct.
 		// #######################################
 		// Read post trace and adjust weight accordingly.
 		dwD = s.prevEffTrace * s.weightFactor(false, &s.mod) * s.soma.APFast()
@@ -239,7 +250,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		// Potentiation LTP
 		// #######################################
 		// Read pre trace (aka psp) and slow AP trace for adjusting weight accordingly.
-		//     Post efficacy                                          weight dependence                 triplet sum
+		//     Post efficacy                       weight dependence        triplet sum
 		wf := s.weightFactor(true, &s.mod)
 		dwP = s.soma.EfficacyTrace() * s.distanceEfficacy * wf * (s.psp + s.soma.ApSlowPrior())
 		updateWeight = true
@@ -247,8 +258,24 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 
 	// Finally update the weight.
 	if updateWeight {
-		// TODO add soft-bounds (Easing)
-		s.w = math.Max(math.Min(s.w+dwP-dwD, s.wMax), s.wMin)
+		newW := s.w + dwP - dwD
+		switch s.environment.WeightBounding() {
+		case api.WeightBoundingHard:
+			s.w = math.Max(math.Min(newW, s.wMax), s.wMin)
+		case api.WeightBoundingSoft: // soft-bounds (Easing)
+			var d float64
+			// With soft-bounds we want to slow down the movement of the weight as it moves
+			// towards wMax/wMin.
+			if s.excititory {
+				d = math.Abs(s.wMax - newW)
+				// sb is larger the farther away newW is from wMax
+			} else {
+				d = math.Abs(newW - s.wMin)
+			}
+			sb := s.config.SoftAcceleration * math.Pow(d, s.config.SoftCurve)
+			// We still need hard-bounds to make sure the bounds aren't exceeded.
+			s.w = math.Max(math.Min(sb*newW, s.wMax), s.wMin)
+		}
 	}
 
 	// Return the "value" of this synapse for this "t"
