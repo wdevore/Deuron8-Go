@@ -36,8 +36,17 @@ Types of initializations possible:
 * *Current*: the synaptic properties are not changed but continue forward. Any changes made to the model are used in the next simulation.
 * *Random*: the synaptic properties are randomly changed prior to simulation. The only property currently supported is Weight.
 
+## Applications
 ### Generators
-**Done** -- A generator program will create json files for synapses. It reads a configuration json file to drive the generator. The generated file can be used by the simulator as a preset.
+A generator program will create json files for synapses. It reads a configuration json file to drive the generator. The generated file can be used by the simulator as a preset.
+
+### Neuron simulator
+This application simulates a single neuron.
+It is located in the *neuron_simulation/app* folder
+Executed as:
+```
+go run .
+```
 
 ## Notes:
 The weights are typically the short term memory until learning **Effort** is increased.

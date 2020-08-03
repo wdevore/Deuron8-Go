@@ -6,7 +6,7 @@
   "Hertz": 5,
   "PoissonPatternMax": 300,
   "PoissonPatternMin": 50,
-  "NoiseLambda": 120,
+  "NoiseLambda": 1000,
   "NoiseCount": 10,
   "Neuron": {
     "Tao": 10,
@@ -15,7 +15,7 @@
     "ID": 0,
     "TaoS": 50,
     "APMax": 20,
-    "Threshold": 20,
+    "Threshold": 15,
     "RefractoryPeriod": 3,
     "SlowSurge": 10,
     "Dendrites": {

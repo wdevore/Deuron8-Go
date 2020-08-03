@@ -54,7 +54,8 @@ type poissonStream struct {
 	// events in the given time interval
 	averagePerInterval float64
 
-	seed uint64
+	seed  uint64
+	rando rand.Source
 
 	output int
 }
@@ -66,13 +67,17 @@ func NewPoissonStream(seed uint64, averagePerInterval float64) api.IBitStream {
 	o.seed = seed
 	o.averagePerInterval = averagePerInterval // Lambda
 
+	o.rando = rand.NewSource(seed)
+
 	o.Reset()
 	return o
 }
 
 // Reset ...
 func (p *poissonStream) Reset() {
-	psource := rand.NewSource(uint64(p.seed))
+	// fmt.Println("Poisson Stream resetting")
+	psource := rand.NewSource(p.seed)
+	p.rando = rand.NewSource(p.seed)
 	p.poisson = distuv.Poisson{Lambda: p.averagePerInterval, Src: psource}
 	p.isi = p.next()
 	p.output = 0
@@ -113,8 +118,13 @@ func (p *poissonStream) next() int64 {
 	// fmt.Println(c)
 
 	r := p.poisson.Rand()
+
+	r = (float64(p.rando.Uint64()) / float64(1<<64)) * r
+	// fmt.Print(float64(p.rando.Uint64())/float64(1<<64), "   ")
+
 	return int64(r)
 
 	// isiF := -math.Log(1.0-r) / p.averagePerInterval
+	// fmt.Print(isiF, "  ")
 	// return int64(math.Round(isiF))
 }

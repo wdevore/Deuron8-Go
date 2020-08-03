@@ -264,6 +264,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		case api.WeightBoundingHard:
 			s.w = math.Max(math.Min(newW, s.wMax), s.wMin)
 		case api.WeightBoundingSoft: // soft-bounds (Easing)
+			// https://neuronaldynamics.epfl.ch/online/Ch19.S2.html
 			var d float64
 			// With soft-bounds we want to slow down the movement of the weight as it moves
 			// towards wMax/wMin.
