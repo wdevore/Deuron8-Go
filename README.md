@@ -25,11 +25,8 @@ The second pass moves the results of the first pass to the neuron's output. Note
 
 # Tasks
 ## Synaptic properties
-* Add initial weight line to weight graph
 
-When the GUI is launched the simulator is built and initialized with Presets.
-
-At the start of a simulation the model is configured accorded to the initializer choice. The model is then copied to the runtime and the simulation is started. Once the simulation is complete the runtime is copied back to the model. The model can then be saved to **synapses.json**
+At the start of a simulation the model is configured according to the initializer choice. The model is then copied to the runtime and the simulation is started. Once the simulation is complete the runtime is copied back to the model. The model can then be saved to **synapses.json**
 
 Types of initializations possible:
 * *Preset*: the synaptic properties are reset back to a set of Presets values from a fixed **synapsed_presets_*N*.json**.
@@ -49,8 +46,15 @@ go run .
 ```
 
 ## Notes:
+Learning:
+The goal is to *try* and learn a pattern out of a Set. The Set size is 2 ot 3 patterns.
+
+* Synapse #2 properties may be a good representative for other synapses
+* Add two or more stimulus patterns
+* Add memory retention functionality. See **https://www.desmos.com/calculator/aj3e3r7ajf** for an equation.
+
 The weights are typically the short term memory until learning **Effort** is increased.
-The other parameters, for example Tao, are controlled by a Meta system. They are the slower changing parms that represent the charateristics of the neuron but also represent information at a meta level.
+The other parameters, for example Tao, are controlled by a Meta system (EA for example). They are the slower changing parms that represent the charateristics of the neuron but also represent information at a meta level.
 
 We have two json files: A Preset that can't be saved over and a version that is overlayed at the end of a simulation.
 
