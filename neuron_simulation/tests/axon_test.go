@@ -1,4 +1,4 @@
-package axontests
+package tests
 
 // go test -count=1 -v axon_test.go
 

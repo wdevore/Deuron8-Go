@@ -223,7 +223,7 @@ func (s *Synapse) tripleIntegration(spanT, t int) (value, w float64) {
 		}
 
 		// #######################################
-		// Depression LTD. This may not be correct.
+		// Depression (LTD). This may not be correct.
 		// #######################################
 		// Read post trace and adjust weight accordingly.
 		dwD = s.prevEffTrace * s.weightFactor(false, &s.mod) * s.soma.APFast()

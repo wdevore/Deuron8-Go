@@ -1,4 +1,4 @@
-package stimulustests
+package tests
 
 // go test -v stimulus_test.go
 

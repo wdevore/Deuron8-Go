@@ -1,4 +1,4 @@
-package simulation
+package tests
 
 import (
 	"testing"
@@ -14,7 +14,7 @@ func init() {
 }
 
 func TestSimulation(t *testing.T) {
-	nwk := network.New()
+	nwk := network.NewNetwork()
 
 	nwk.Load(config.API)
 }

@@ -1,5 +1,6 @@
 # Deuron 8 written in Go
-The simulation for a single neuron is still written in *Julia*.
+
+![Deuron](Deuron8-Go.png)
 
 # Simulation
 The simulation makes two "passes" through the network for each
@@ -46,13 +47,24 @@ go run .
 ```
 
 ## Notes:
-Learning:
+
+# Learning
 The goal is to *try* and learn a pattern out of a Set. The Set size is 2 ot 3 patterns.
 
 * Synapse #2 properties may be a good representative for other synapses
 * Add two or more stimulus patterns
+
+# Short term plasticity (STP)
+STD/STF ... Articles:
+* x
+
+# Memory retention
 * Add memory retention functionality. See **https://www.desmos.com/calculator/aj3e3r7ajf** for an equation.
 
+Retension can last for 10s ms to days or even permanent.
+Memory can be at the Soma or Synapse
+
+# Misc
 The weights are typically the short term memory until learning **Effort** is increased.
 The other parameters, for example Tao, are controlled by a Meta system (EA for example). They are the slower changing parms that represent the charateristics of the neuron but also represent information at a meta level.
 

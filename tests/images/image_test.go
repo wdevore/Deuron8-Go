@@ -1,4 +1,4 @@
-package imageloads
+package images
 
 import (
 	"fmt"
